@@ -25,23 +25,6 @@ if ( 'bluetooth' in navigator === false ) {
   button.style.display = 'none';
   message.innerHTML = 'This browser doesn\'t support the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API" target="_blank">Web Bluetooth API</a> :(';
 }
-// document.addEventListener( 'mousemove', onDocumentMouseMove, false )
-// function onDocumentMouseMove( event ) {
-//     event.preventDefault();
-//
-//
-//
-// }
-
-	// camera.zoom = zoom
-	// camera.translateZ(zoom);
-	// console.log(camera.position.x)
-
-	// console.log(camera.zoom)
-	// zoom=""
-
-	// camera.position =
-
 
 
 function init(){
@@ -124,114 +107,47 @@ const lightHelper = new THREE.PointLightHelper(light);
     controller.connect();
   } );
 
-
-	// mesh = new THREE.Mesh(
-	// 	box = new THREE.BoxGeometry(1,1,10), // width, height, depth
-	// 	new THREE.MeshBasicMaterial({color:0xff4444, wireframe:false}) // Color is given in hexadecimal RGB
-	// 	// 0xff0000 is pure red, 0x00ff00 is pure green, and 0x0000ff is pure blue.
-	// 	// white would be 0xffffff and black would be 0x000000.
-	// );
 	var axesHelper = new THREE.AxesHelper( 5 );
-scene.add( axesHelper );
+	scene.add( axesHelper );
 
+	x = 0;
+	y = 1;
+	z= 2;
+	$.ajax({
+		 type : 'GET',
+		 dataType : 'json',
+		 async: false,
+		 url: 'data.json',
+	  success : function(data) {
+			console.log(data._embedded.artworks[1]._links.thumbnail.href)
+			for (var i =0; i<data._embedded.artworks.length; i++){
+				var map = new THREE.TextureLoader().load(data._embedded.artworks[i]._links.thumbnail.href);
+					var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false} );
+				var newSprite = new THREE.Sprite(material)
 
-
-
-								// var testArray = [];
-								// for (var i = 1; i <= 50; i++) {
-								// 	testArray.push(i);
-								// 	}
-								x = 0;
-								y = 1;
-								z= 2;
-								$.ajax({
-									 type : 'GET',
-									 dataType : 'json',
-									 async: false,
-									 url: 'data.json',
-								  success : function(data) {
-										console.log(data._embedded.artworks[1]._links.thumbnail.href)
-										for (var i =0; i<data._embedded.artworks.length; i++){
-											var map = new THREE.TextureLoader().load(data._embedded.artworks[i]._links.thumbnail.href);
- 											var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false} );
-											var newSprite = new THREE.Sprite(material)
-
-											if(x >= 0 && y > 0){
-												x += 0.5;
-										 		y -= 0.25;
-											}
-											else if (x > 0 && y <= 0) {
-												x -= 0.5;
-												y -= 0.25;
-											}
-											else if(x >= -3 && y < 0){
-												x -= 0.5;
-												y += 0.25;
-											}
-											else if (x < 0 && y >= 0){
-												x += 0.5;
-												y += 0.25;
-											}
-											z -= 2.5
-											console.log(x,y,z)
-											newSprite.position.set(x,y,z);
-											// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-											newSprite.receiveShadow = true;
-											newSprite.castShadow = true;
-											scene.add(newSprite)
-										}
-								  	// console.log(data._embedded.artworks[0]);
-										// var testImage = data._embedded.artworks[0]._links.thumbnail.href;
-										// console.log(testImage)
-										// var img = document.createElement("img");
-										// img.src = testImage
-										// console.log(img)
-										// document.body.appendChild(img);
-
-
-
-									}
-								})
-								// for (var i =0; i<testArray.length; i++){
-								// 	var newSprite = new THREE.Sprite(material)
-								//
-								// 	if(x >= 0 && y > 0){
-								// 		x += 1;
-								//  		y -= 0.5;
-								// 	}
-								// 	else if (x > 0 && y <= 0) {
-								// 		x -= 1;
-								// 		y -= 0.5;
-								// 	}
-								// 	else if(x >= -3 && y < 0){
-								// 		x -= 1;
-								// 		y += 0.5;
-								// 	}
-								// 	else if (x < 0 && y >= 0){
-								// 		x += 1;
-								// 		y += 0.5;
-								// 	}
-								// 	z -= 2.5
-								// 	console.log(x,y,z)
-								// 	newSprite.position.set(x,y,z);
-								// 	// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-								// 	newSprite.receiveShadow = true;
-								// 	newSprite.castShadow = true;
-								// 	scene.add(newSprite)
-								// }
-	// Add the mesh to the scene.
-
-
-
-	// Move the camera to 0,0,-5 (the Y axis is "up")
-
-
-	// Point the camera to look at 0,0,0
-	// camera.lookAt(new THREE.Vector3(0,0,0));
-	// Alternatively, this also works:
-	// camera.lookAt(mesh.position);
-
-	// Creates the renderer with size 1280x720
+				if(x >= 0 && y > 0){
+					x += 0.5;
+			 		y -= 0.25;
+				}
+				else if (x > 0 && y <= 0) {
+					x -= 0.5;
+					y -= 0.25;
+				}
+				else if(x >= -3 && y < 0){
+					x -= 0.5;
+					y += 0.25;
+				}
+				else if (x < 0 && y >= 0){
+					x += 0.5;
+					y += 0.25;
+				}
+				z -= 2.5
+				console.log(x,y,z)
+				newSprite.position.set(x,y,z);
+				newSprite.receiveShadow = true;
+				newSprite.castShadow = true;
+				scene.add(newSprite)
+			}
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize(1280, 720);
 	// Puts the "canvas" into our HTML page.
