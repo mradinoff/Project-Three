@@ -3,34 +3,113 @@ var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTUyNj
 var clientID = "b672dc2e7f242760d0d6"
 
 var scene, camera, renderer, mesh;
-var zoom = "";
-var orbitCamera = "";
-var zooming = function(){
-	camera.position.set(camera.position.x,camera.position.y,zoom)
-	camera.updateProjectionMatrix();
+var backwards = false;
+var stop = false;
+var speed = 0.04
+
+var forwardsPress = function(changingSpeed) {
+	if (speed < 0 && backwards === true) {
+		backwards = false;
+		speed = changingSpeed
+	} else if (backwards === true) {
+		speed -= changingSpeed
+	} else if (stop === true) {
+		backwards = false;
+		stop = false;
+		speed = changingSpeed
+	} else {
+		speed += changingSpeed
+	}
 }
+var backwardsPress = function(changingSpeed) {
+	if (speed < 0 && backwards === false) {
+		backwards = true;
+		speed = changingSpeed
+	} else if (backwards === false) {
+		speed -= changingSpeed
+	} else if (stop === true) {
+		backwards = true;
+		stop = false;
+		speed = changingSpeed
+	} else {
+		speed += changingSpeed
+	}
+}
+var stopPress = function() {
+	if (stop === false) {
+		stop = true
+		console.log("pressed")
+		speed = 0.04
+	} else if (stop === true) {
+		stop = false
+	}
+}
+
 //
-	document.addEventListener("keypress", function(event){
-	if(event.keyCode === 119){
-		zoom-=0.3
-	}
-	if(event.keyCode === 115){
-		console.log("down")
-		zoom+=0.2
-	}
-	zooming();
-})
-//Set up daydream variables
-if ( 'bluetooth' in navigator === false ) {
-  button.style.display = 'none';
-  message.innerHTML = 'This browser doesn\'t support the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API" target="_blank">Web Bluetooth API</a> :(';
+document.addEventListener("keypress", function(event) {
+  if (event.keyCode === 119) {
+		forwardsPress(0.01);
+				// 	if( speed < 0 && backwards === true){
+				// 		backwards = false;
+				// 		speed = 0.01
+				// 	}
+				// 	else if (backwards === true){
+				// 		speed -= 0.01
+				// 	}
+				// 	else if (stop === true){
+				// 		backwards = false;
+				// 		stop = false;
+				// 		speed = 0.01
+				// 	}
+				// 	else{
+				// 		speed += 0.01
+				// 	}
+				// }
+		}
+		if (event.keyCode === 115) {
+				  backwardsPress(0.01)
+				// 	if (speed < 0 && backwards === false){
+				// 		backwards = true;
+				// 		speed = 0.01
+				// 	}
+				// 	else if(backwards === false){
+				// 		speed -= 0.01
+				// 	}
+				// 	else if (stop === true){
+				// 		backwards = true;
+				// 		stop = false;
+				// 		speed = 0.01
+				// 	}
+				// 	else{
+				// 		speed += 0.01
+				// 	}
+				// }
+    }
+		if (event.keyCode === 32) {
+			stopPress();
+		}
+				// 	if(stop === false){
+				// 		stop = true
+				// 		console.log("pressed")
+				// 		speed = 0.04
+				// 	}
+				// 	else if(stop === true){
+				// 		stop = false
+				// 	}
+				// }
+	});
+
+			//Set up daydream variables
+ if ('bluetooth' in navigator === false) {
+	button.style.display = 'none';
+	message.innerHTML = 'This browser doesn\'t support the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API" target="_blank">Web Bluetooth API</a> :(';
 }
 
 
-function init(){
+function init() {
 	// Create a scene and camera
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight, 0.1, 1000);
+	camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 300);
 	//
 
 	// controls.update() must be called after any manual changes to the camera's transform
@@ -44,112 +123,166 @@ function init(){
 	// Materials affect how the geometry looks, especially under lights.
 
 	const light = new THREE.PointLight("#f7f3a3");
-light.position.set(-20, 30, 0);
-console.log(light)
-light.intensity = 3;
-light.castShadow = true;
-light.shadow.mapSize.width = 2048;
-light.shadow.mapSize.height = 2048;
-scene.add(light);
-const lightHelper = new THREE.PointLightHelper(light);
+	light.position.set(-20, 30, 0);
+	console.log(light)
+	light.intensity = 3;
+	light.castShadow = true;
+	light.shadow.mapSize.width = 2048;
+	light.shadow.mapSize.height = 2048;
+	scene.add(light);
+	const lightHelper = new THREE.PointLightHelper(light);
 
-// Add daydream controller
-  $('#button').on( 'click', function () {
-    console.log("Initialise daydream");
-    var controller = new DaydreamController();
-    controller.onStateChange( function ( state ) {
-      if ( camera !== undefined ) {
-        var angle = Math.sqrt( state.xOri * state.xOri + state.yOri * state.yOri + state.zOri * state.zOri );
-        if ( angle > 0 ) {
-          axis.set( state.xOri, state.yOri, state.zOri )
-          axis.multiplyScalar( 1 / angle );
-          quaternion.setFromAxisAngle( axis, angle );
-          if ( initialised === false ) {
-            quaternionHome.copy( quaternion );
-            quaternionHome.inverse();
-            initialised = true;
-          }
-        } else {
-          quaternion.set( 0, 0, 0, 1 );
-        }
-				if (state.yTouch > 0.5){ //when down is pressed
-					console.log("down")
-					zoom +=0.05;
-					zooming();
+	// Add daydream controller
+	$('#button').on('click', function() {
+		console.log("Initialise daydream");
+		var controller = new DaydreamController();
+		controller.onStateChange(function(state) {
+			if (camera !== undefined) {
+				var angle = Math.sqrt(state.xOri * state.xOri + state.yOri * state.yOri + state.zOri * state.zOri);
+				if (angle > 0) {
+					axis.set(state.xOri, state.yOri, state.zOri)
+					axis.multiplyScalar(1 / angle);
+					quaternion.setFromAxisAngle(axis, angle);
+					if (initialised === false) {
+						quaternionHome.copy(quaternion);
+						quaternionHome.inverse();
+						initialised = true;
+					}
+				} else {
+					quaternion.set(0, 0, 0, 1);
+				}
+				if (state.yTouch > 0.5) { //when down is pressed
+					backwardsPress(0.001);
 				}
 
-				if (state.yTouch < 0.5 && state.yTouch > 0){ //When up is pressed
-					console.log("up")
-					zoom -=0.05;
-					zooming();
+				if (state.yTouch < 0.5 && state.yTouch > 0) { //When up is pressed
+					forwardsPress(0.001);
 				}
-        if ( state.isHomeDown ) {
-          if ( timeout === null ) {
-            timeout = setTimeout( function () {
-              quaternionHome.copy( quaternion );
-              quaternionHome.inverse();
-            }, 1000 );
-          }
-        } else {
-          if ( timeout !== null ) {
-            clearTimeout( timeout );
-            timeout = null;
-          }
+        if (state.isVolMinusDown === true){
+          stopPress();
         }
-        camera.quaternion.copy( quaternionHome );
-        camera.quaternion.multiply( quaternion );
-        // touch.position.x = ( state.xTouch * 2 - 1 ) / 1000;
-        // touch.position.y = - ( state.yTouch * 2 - 1 ) / 1000;
-        // touch.visible = state.xTouch > 0 && state.yTouch > 0;
-      }
-    } );
+				if (state.isHomeDown) {
+					if (timeout === null) {
+						timeout = setTimeout(function() {
+							quaternionHome.copy(quaternion);
+							quaternionHome.inverse();
+						}, 1000);
+					}
+				} else {
+					if (timeout !== null) {
+						clearTimeout(timeout);
+						timeout = null;
+					}
+				}
+				camera.quaternion.copy(quaternionHome);
+				camera.quaternion.multiply(quaternion);
+				// touch.position.x = ( state.xTouch * 2 - 1 ) / 1000;
+				// touch.position.y = - ( state.yTouch * 2 - 1 ) / 1000;
+				// touch.visible = state.xTouch > 0 && state.yTouch > 0;
+			}
+		});
 
-    controller.connect();
-  } );
+		controller.connect();
+	});
 
-	var axesHelper = new THREE.AxesHelper( 5 );
-	scene.add( axesHelper );
+	var axesHelper = new THREE.AxesHelper(5);
+	scene.add(axesHelper);
 
 	x = 0;
 	y = 1;
-	z= 2;
+	z = 2;
 	$.ajax({
-		 type : 'GET',
-		 dataType : 'json',
-		 async: false,
-		 url: 'data.json',
-	  success : function(data) {
+		type: 'GET',
+		dataType: 'json',
+		async: false,
+		url: 'data.json',
+		success: function(data) {
 			console.log(data._embedded.artworks[1]._links.thumbnail.href)
-			for (var i =0; i<data._embedded.artworks.length; i++){
+			for (var i = 0; i < data._embedded.artworks.length; i++) {
 				var map = new THREE.TextureLoader().load(data._embedded.artworks[i]._links.thumbnail.href);
-					var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false} );
+				var material = new THREE.SpriteMaterial({
+					map: map,
+					color: 0xffffff,
+					fog: false
+				});
 				var newSprite = new THREE.Sprite(material)
 
-				if(x >= 0 && y > 0){
+				if (x >= 0 && y > 0) {
 					x += 0.5;
-			 		y -= 0.25;
-				}
-				else if (x > 0 && y <= 0) {
+					y -= 0.25;
+				} else if (x > 0 && y <= 0) {
 					x -= 0.5;
 					y -= 0.25;
-				}
-				else if(x >= -3 && y < 0){
+				} else if (x >= -2 && y < 0) {
 					x -= 0.5;
 					y += 0.25;
-				}
-				else if (x < 0 && y >= 0){
+				} else if (x < 0 && y >= 0) {
 					x += 0.5;
 					y += 0.25;
 				}
 				z -= 2.5
-				console.log(x,y,z)
-				newSprite.position.set(x,y,z);
+				console.log(x, y, z)
+				newSprite.position.set(x, y, z);
+				// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
 				newSprite.receiveShadow = true;
 				newSprite.castShadow = true;
 				scene.add(newSprite)
 			}
+			// console.log(data._embedded.artworks[0]);
+			// var testImage = data._embedded.artworks[0]._links.thumbnail.href;
+			// console.log(testImage)
+			// var img = document.createElement("img");
+			// img.src = testImage
+			// console.log(img)
+			// document.body.appendChild(img);
+
+
+
+		}
+	})
+	// for (var i =0; i<testArray.length; i++){
+	// 	var newSprite = new THREE.Sprite(material)
+	//
+	// 	if(x >= 0 && y > 0){
+	// 		x += 1;
+	//  		y -= 0.5;
+	// 	}
+	// 	else if (x > 0 && y <= 0) {
+	// 		x -= 1;
+	// 		y -= 0.5;
+	// 	}
+	// 	else if(x >= -3 && y < 0){
+	// 		x -= 1;
+	// 		y += 0.5;
+	// 	}
+	// 	else if (x < 0 && y >= 0){
+	// 		x += 1;
+	// 		y += 0.5;
+	// 	}
+	// 	z -= 2.5
+	// 	console.log(x,y,z)
+	// 	newSprite.position.set(x,y,z);
+	// 	// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
+	// 	newSprite.receiveShadow = true;
+	// 	newSprite.castShadow = true;
+	// 	scene.add(newSprite)
+	// }
+	// Add the mesh to the scene.
+
+
+
+	// Move the camera to 0,0,-5 (the Y axis is "up")
+
+
+	// Point the camera to look at 0,0,0
+	// camera.lookAt(new THREE.Vector3(0,0,0));
+	// Alternatively, this also works:
+	// camera.lookAt(mesh.position);
+
+	// Creates the renderer with size 1280x720
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize(1280, 720);
+	renderer.setClearColor("white")
 	// Puts the "canvas" into our HTML page.
 	document.body.appendChild(renderer.domElement);
 
@@ -157,14 +290,15 @@ const lightHelper = new THREE.PointLightHelper(light);
 	animate();
 
 }
-function animate(){
+
+function animate() {
+	if (backwards === false && stop === false) {
+		camera.position.z -= speed
+	};
+	if (backwards === true && stop === false) {
+		camera.position.z += speed
+	}
 	requestAnimationFrame(animate); // Tells the browser to smoothly render at 60Hz
-
-	// Rotate our mesh.
-	// mesh.rotation.x += 0.01;
-	// mesh.rotation.y += 0.02;
-
-	// Draw the scene from the perspective of the camera.
 	renderer.render(scene, camera);
 }
 
