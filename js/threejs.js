@@ -19690,37 +19690,37 @@
 
 		function isPowerOfTwo( image ) {
 
-			return _Math.isPowerOfTwo( image.width ) && _Math.isPowerOfTwo( image.height );
-
+			// return _Math.isPowerOfTwo( image.width ) && _Math.isPowerOfTwo( image.height );
+			//
 		}
 
 		function makePowerOfTwo( image ) {
 
-			if ( image instanceof HTMLImageElement || image instanceof HTMLCanvasElement || image instanceof ImageBitmap ) {
-
-				if ( _canvas === undefined ) _canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-
-				_canvas.width = _Math.floorPowerOfTwo( image.width );
-				_canvas.height = _Math.floorPowerOfTwo( image.height );
-
-				var context = _canvas.getContext( '2d' );
-				context.drawImage( image, 0, 0, _canvas.width, _canvas.height );
-
-				console.warn( 'THREE.WebGLRenderer: image is not power of two (' + image.width + 'x' + image.height + '). Resized to ' + _canvas.width + 'x' + _canvas.height, image );
-
-				return _canvas;
-
-			}
-
-			return image;
+			// if ( image instanceof HTMLImageElement || image instanceof HTMLCanvasElement || image instanceof ImageBitmap ) {
+			//
+			// 	if ( _canvas === undefined ) _canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
+			//
+			// 	_canvas.width = _Math.floorPowerOfTwo( image.width );
+			// 	_canvas.height = _Math.floorPowerOfTwo( image.height );
+			//
+			// 	var context = _canvas.getContext( '2d' );
+			// 	context.drawImage( image, 0, 0, _canvas.width, _canvas.height );
+			//
+			// 	console.warn( 'THREE.WebGLRenderer: image is not power of two (' + image.width + 'x' + image.height + '). Resized to ' + _canvas.width + 'x' + _canvas.height, image );
+			//
+			// 	return _canvas;
+			//
+			// }
+			//
+			// return image;
 
 		}
 
 		function textureNeedsPowerOfTwo( texture ) {
 
-			return ( texture.wrapS !== ClampToEdgeWrapping || texture.wrapT !== ClampToEdgeWrapping ) ||
-				( texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter );
-
+		// 	return ( texture.wrapS !== ClampToEdgeWrapping || texture.wrapT !== ClampToEdgeWrapping ) ||
+		// 		( texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter );
+		//
 		}
 
 		function textureNeedsGenerateMipmaps( texture, isPowerOfTwo ) {
@@ -20050,11 +20050,11 @@
 				_gl.texParameteri( textureType, _gl.TEXTURE_MAG_FILTER, filterFallback( texture.magFilter ) );
 				_gl.texParameteri( textureType, _gl.TEXTURE_MIN_FILTER, filterFallback( texture.minFilter ) );
 
-				if ( texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter ) {
-
-					console.warn( 'THREE.WebGLRenderer: Texture is not power of two. Texture.minFilter should be set to THREE.NearestFilter or THREE.LinearFilter.', texture );
-
-				}
+				// if ( texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter ) {
+				//
+				// 	console.warn( 'THREE.WebGLRenderer: Texture is not power of two. Texture.minFilter should be set to THREE.NearestFilter or THREE.LinearFilter.', texture );
+				//
+				// }
 
 			}
 
@@ -21169,7 +21169,7 @@
 
 	function WebGLRenderer( parameters ) {
 
-		console.log( 'THREE.WebGLRenderer', REVISION );
+		// console.log( 'THREE.WebGLRenderer', REVISION );
 
 		parameters = parameters || {};
 

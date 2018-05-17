@@ -3,11 +3,28 @@ html{
 }
 #button{
   z-index: 1000;
+  position: absolute;
 }
 canvas{
   width: 100%;
   height: 100%;
 }
 .test{
-  z-index: 2000;
+  z-index: 500;
+}
+#popup {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 100vh;
+  width: 20vw;
+  background-color: pink;
+  display: none;
+  opacity: 0.6;
+}
+#popup button{
+  margin-top: 100px;
+}
+#popup img{
+  width: 18vw;
 }

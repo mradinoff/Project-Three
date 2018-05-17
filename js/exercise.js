@@ -2,10 +2,13 @@
 var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTUyNjk2NzU4MywiaWF0IjoxNTI2MzYyNzgzLCJhdWQiOiI1YWY0ZWFkN2EwOWE2NzZjODA4N2Y0YzAiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWFmYTcyOWY5YzE4ZGIyMDJlN2NjMTg5In0.zLuLtEdlB2dnD_u7VahsjNiW0RlaCu7avNn4Az_7icE"
 var clientID = "b672dc2e7f242760d0d6"
 
+raycaster = new THREE.Raycaster();
+var mouse = new THREE.Vector2(), raycaster ;
 var scene, camera, renderer, mesh;
 var backwards = false;
 var stop = false;
-var speed = 0.04
+var speed = 0.03;
+var previousIntersect = -1;
 
 var forwardsPress = function(changingSpeed) {
 	if (speed < 0 && backwards === true) {
@@ -39,13 +42,17 @@ var stopPress = function() {
 	if (stop === false) {
 		stop = true
 		console.log("pressed")
-		speed = 0.04
+		speed = 0.03
 	} else if (stop === true) {
 		stop = false
 	}
 }
 
 //
+document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+document.addEventListener( 'mousemove', onDocumentMouseOver);
+
+
 document.addEventListener("keypress", function(event) {
   if (event.keyCode === 119) {
 		forwardsPress(0.01);
@@ -119,12 +126,13 @@ function init() {
 	var initialised = false;
 	var timeout = null;
 
+
+
 	// A Mesh is made up of a geometry and a material.
 	// Materials affect how the geometry looks, especially under lights.
 
 	const light = new THREE.PointLight("#f7f3a3");
 	light.position.set(-20, 30, 0);
-	console.log(light)
 	light.intensity = 3;
 	light.castShadow = true;
 	light.shadow.mapSize.width = 2048;
@@ -190,16 +198,16 @@ function init() {
 
 	x = 0;
 	y = 1;
-	z = 2;
+	z = -2.5;
 	$.ajax({
 		type: 'GET',
 		dataType: 'json',
 		async: false,
 		url: 'data.json',
 		success: function(data) {
-			console.log(data._embedded.artworks[1]._links.thumbnail.href)
-			for (var i = 0; i < data._embedded.artworks.length; i++) {
-				var map = new THREE.TextureLoader().load(data._embedded.artworks[i]._links.thumbnail.href);
+			for (var i = 0; i < data._embedded.artworks.length; i++) {`${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg?size=128x128`
+        var image = `${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
+				var map = new THREE.TextureLoader().load(`${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`);
 				var material = new THREE.SpriteMaterial({
 					map: map,
 					color: 0xffffff,
@@ -221,11 +229,13 @@ function init() {
 					y += 0.25;
 				}
 				z -= 2.5
-				console.log(x, y, z)
 				newSprite.position.set(x, y, z);
+        newSprite.data = data._embedded.artworks[i];
+        newSprite.index = i;
 				// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
 				newSprite.receiveShadow = true;
 				newSprite.castShadow = true;
+        newSprite.scale.set(1, 1, 1)
 				scene.add(newSprite)
 			}
 			// console.log(data._embedded.artworks[0]);
@@ -240,6 +250,7 @@ function init() {
 
 		}
 	})
+
 	// for (var i =0; i<testArray.length; i++){
 	// 	var newSprite = new THREE.Sprite(material)
 	//
@@ -281,7 +292,7 @@ function init() {
 
 	// Creates the renderer with size 1280x720
 	renderer = new THREE.WebGLRenderer();
-	renderer.setSize(1280, 720);
+	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.setClearColor("white")
 	// Puts the "canvas" into our HTML page.
 	document.body.appendChild(renderer.domElement);
@@ -290,6 +301,69 @@ function init() {
 	animate();
 
 }
+var closeDiv = function(){
+  document.getElementById('popup').style.display = "none";
+  speed = 0.03;
+  stop = false;
+}
+// xxxxx
+
+function onDocumentMouseDown( event ) {
+  event.preventDefault();
+  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  // find intersections
+  raycaster.setFromCamera( mouse, camera );
+  var intersects = raycaster.intersectObjects( scene.children );
+
+  for ( var i = 0; i < intersects.length; i++ ) {
+    $('#close').remove();
+    $('#title').remove();
+    $('#thumbnail').remove();
+    console.log(intersects[ i ].object)
+    var image = `${intersects[i].object.data._links.image.href.slice(0, intersects[i].object.data._links.image.href.length-19)}large.jpg`
+    document.getElementById('popup').style.display = "block";
+    $('#popup').append('<button onClick="closeDiv()" id="close">button</button>');
+    $('#popup').append(`<h1 id="title">${intersects[i].object.data.title}</h1>`);
+    $('#popup').append(`<img id = "thumbnail" src=${image}>`);
+    speed = 0.011
+  }
+}
+// xxxxxxx
+function onDocumentMouseOver( event ) {
+  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+  // find intersections
+  raycaster.setFromCamera( mouse, camera );
+  var intersects = raycaster.intersectObjects( scene.children );
+
+  var whiteSpace = false
+  if(intersects[0]=== undefined){
+    whiteSpace = true;
+    if(speed === 0.01){
+      speed = 0.04
+    }
+  }
+  ;
+  if (whiteSpace === true){
+  }
+  for ( var i = 0; i < intersects.length; i++ ) {
+    console.log(previousIntersect);
+    console.log(intersects[0].object.index)
+    if(previousIntersect !== intersects[i].object.index){
+    }
+    else{
+    }
+    console.log(intersects[ 0 ].object.material)
+    if(speed !==0.011){
+      speed = 0.01;
+    }
+    previousIntersect = intersects[0].object.index;
+  }
+}
+
+
 
 function animate() {
 	if (backwards === false && stop === false) {
