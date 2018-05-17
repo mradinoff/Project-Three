@@ -7,7 +7,7 @@ var mouse = new THREE.Vector2(), raycaster ;
 var scene, camera, renderer, mesh;
 var backwards = false;
 var stop = false;
-var speed = 0.03;
+var speed = 0.02;
 var previousIntersect = -1;
 
 var forwardsPress = function(changingSpeed) {
@@ -42,7 +42,7 @@ var stopPress = function() {
 	if (stop === false) {
 		stop = true
 		console.log("pressed")
-		speed = 0.03
+		speed = 0.02
 	} else if (stop === true) {
 		stop = false
 	}
@@ -301,15 +301,11 @@ function init() {
 	animate();
 
 }
-var closeDiv = function(){
-  document.getElementById('popup').style.display = "none";
-  speed = 0.03;
-  stop = false;
-}
 // xxxxx
 
 function onDocumentMouseDown( event ) {
   event.preventDefault();
+  document.getElementById('popup').style.display = "none";
   mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
   mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
   // find intersections
@@ -323,10 +319,8 @@ function onDocumentMouseDown( event ) {
     console.log(intersects[ i ].object)
     var image = `${intersects[i].object.data._links.image.href.slice(0, intersects[i].object.data._links.image.href.length-19)}large.jpg`
     document.getElementById('popup').style.display = "block";
-    $('#popup').append('<button onClick="closeDiv()" id="close">button</button>');
     $('#popup').append(`<h1 id="title">${intersects[i].object.data.title}</h1>`);
     $('#popup').append(`<img id = "thumbnail" src=${image}>`);
-    speed = 0.011
   }
 }
 // xxxxxxx
@@ -342,23 +336,18 @@ function onDocumentMouseOver( event ) {
   if(intersects[0]=== undefined){
     whiteSpace = true;
     if(speed === 0.01){
-      speed = 0.04
+      speed = 0.02
     }
   }
   ;
   if (whiteSpace === true){
   }
   for ( var i = 0; i < intersects.length; i++ ) {
-    console.log(previousIntersect);
-    console.log(intersects[0].object.index)
     if(previousIntersect !== intersects[i].object.index){
     }
     else{
     }
-    console.log(intersects[ 0 ].object.material)
-    if(speed !==0.011){
-      speed = 0.01;
-    }
+    speed = 0.01;
     previousIntersect = intersects[0].object.index;
   }
 }

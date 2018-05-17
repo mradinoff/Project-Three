@@ -22,9 +22,7 @@ canvas{
   display: none;
   opacity: 0.6;
 }
-#popup button{
-  margin-top: 100px;
-}
+
 #popup img{
   width: 18vw;
 }
