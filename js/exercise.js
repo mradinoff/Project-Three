@@ -10,6 +10,7 @@ var backwards = false;
 var stop = false;
 var speed = 0.02;
 var previousIntersect = -1;
+let timelineWorkspace = []
 
 var forwardsPress = function(changingSpeed) {
 	if (speed < 0 && backwards === true) {
@@ -185,18 +186,22 @@ function init() {
 		async: false,
 		url: 'data.json',
 		success: function(data) {
-      timelineWorkspace = []
+
       console.log(data._embedded.artworks[0].date.slice(0, 4))
       for( var i = 0; i < data._embedded.artworks.length; i++){
-        timelineWorkspace.push([i, data._embedded.artworks[0].date.slice(0, 4)])
+          if  (data._embedded.artworks[i].date.slice(0, 4) === ""){
+          }
+          else{
+          timelineWorkspace.push([i, data._embedded.artworks[i].date.slice(0, 4)])
+        }
       }
       timelineWorkspace.sort(function(a, b) {
         return a[1] - b[1];
-        console.log(timelineWorkspace)
       });
-			for (var i = 0; i < data._embedded.artworks.length; i++) {`${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
-        var image = `${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
-				var map = new THREE.TextureLoader().load(`${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`);
+      console.log(timelineWorkspace)
+			for (var i = 0; i < timelineWorkspace.length; i++) {`${data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.slice(0, data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.length-19)}square.jpg`
+        var image = `${data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.slice(0, data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.length-19)}square.jpg`
+				var map = new THREE.TextureLoader().load(`${data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.slice(0, data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.length-19)}square.jpg`);
 				var material = new THREE.SpriteMaterial({
 					map: map,
 					color: 0xffffff,
@@ -219,8 +224,9 @@ function init() {
 				}
 				z -= 2.5
 				newSprite.position.set(x, y, z);
-        newSprite.data = data._embedded.artworks[i];
-        newSprite.index = i;
+        console.log(data._embedded.artworks[timelineWorkspace[i][0]])
+        newSprite.data = data._embedded.artworks[timelineWorkspace[i][0]];
+        newSprite.index = [timelineWorkspace[i][0]];
 				// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
 				newSprite.receiveShadow = true;
 				newSprite.castShadow = true;
@@ -253,17 +259,16 @@ function onDocumentMouseDown( event ) {
   // find intersections
   raycaster.setFromCamera( mouse, camera );
   var intersects = raycaster.intersectObjects( scene.children );
+  $('#close').remove();
+  $('#title').remove();
+  $('#thumbnail').remove();
+  console.log(intersects)
+  console.log(intersects[0].object.data._links.image.href)
+  var image = `${intersects[0].object.data._links.image.href.slice(0, intersects[0].object.data._links.image.href.length-19)}large.jpg`
+  document.getElementById('popup').style.display = "block";
+  $('#popup').append(`<h1 id="title">${intersects[0].object.data.title}</h1>`);
+  $('#popup').append(`<img id = "thumbnail" src=${image}>`);
 
-  for ( var i = 0; i < intersects.length; i++ ) {
-    $('#close').remove();
-    $('#title').remove();
-    $('#thumbnail').remove();
-    console.log(intersects[ i ].object)
-    var image = `${intersects[i].object.data._links.image.href.slice(0, intersects[i].object.data._links.image.href.length-19)}large.jpg`
-    document.getElementById('popup').style.display = "block";
-    $('#popup').append(`<h1 id="title">${intersects[i].object.data.title}</h1>`);
-    $('#popup').append(`<img id = "thumbnail" src=${image}>`);
-  }
 }
 // xxxxxxx
 function onDocumentMouseOver( event ) {
@@ -284,14 +289,12 @@ function onDocumentMouseOver( event ) {
   if (whiteSpace === true){
   }
   else{
-    for ( var i = 0; i < intersects.length; i++ ) {
-      if(previousIntersect !== intersects[i].object.index){
-      }
-      else{
-      }
-      speed = 0.01;
-      previousIntersect = intersects[0].object.index;
+    if(previousIntersect !== intersects[0].object.index){
     }
+    else{
+    }
+    speed = 0.01;
+    previousIntersect = intersects[0].object.index;
   }
 }
 
