@@ -5,6 +5,7 @@ var clientID = "b672dc2e7f242760d0d6"
 raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2(), raycaster ;
 var scene, camera, renderer, mesh;
+var skyboxMesh;
 var backwards = false;
 var stop = false;
 var speed = 0.02;
@@ -56,54 +57,13 @@ document.addEventListener( 'mousemove', onDocumentMouseOver);
 document.addEventListener("keypress", function(event) {
   if (event.keyCode === 119) {
 		forwardsPress(0.01);
-				// 	if( speed < 0 && backwards === true){
-				// 		backwards = false;
-				// 		speed = 0.01
-				// 	}
-				// 	else if (backwards === true){
-				// 		speed -= 0.01
-				// 	}
-				// 	else if (stop === true){
-				// 		backwards = false;
-				// 		stop = false;
-				// 		speed = 0.01
-				// 	}
-				// 	else{
-				// 		speed += 0.01
-				// 	}
-				// }
 		}
 		if (event.keyCode === 115) {
 				  backwardsPress(0.01)
-				// 	if (speed < 0 && backwards === false){
-				// 		backwards = true;
-				// 		speed = 0.01
-				// 	}
-				// 	else if(backwards === false){
-				// 		speed -= 0.01
-				// 	}
-				// 	else if (stop === true){
-				// 		backwards = true;
-				// 		stop = false;
-				// 		speed = 0.01
-				// 	}
-				// 	else{
-				// 		speed += 0.01
-				// 	}
-				// }
     }
 		if (event.keyCode === 32) {
 			stopPress();
 		}
-				// 	if(stop === false){
-				// 		stop = true
-				// 		console.log("pressed")
-				// 		speed = 0.04
-				// 	}
-				// 	else if(stop === true){
-				// 		stop = false
-				// 	}
-				// }
 	});
 
 			//Set up daydream variables
@@ -116,7 +76,7 @@ document.addEventListener("keypress", function(event) {
 function init() {
 	// Create a scene and camera
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 300);
+	camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 100000);
 	//
 
 	// controls.update() must be called after any manual changes to the camera's transform
@@ -139,7 +99,6 @@ function init() {
 	light.shadow.mapSize.height = 2048;
 	scene.add(light);
 	const lightHelper = new THREE.PointLightHelper(light);
-
 	// Add daydream controller
 	$('#button').on('click', function() {
 		console.log("Initialise daydream");
@@ -196,6 +155,27 @@ function init() {
 	var axesHelper = new THREE.AxesHelper(5);
 	scene.add(axesHelper);
 
+  var urls = [ "skybox/px.jpg", "skybox/nx.jpg",
+      "skybox/py.jpg", "skybox/ny.jpg",
+      "skybox/pz.jpg", "skybox/nz.jpg" ];
+  var textureCube = THREE.ImageUtils.loadTextureCube(urls);
+  var shader = THREE.ShaderLib["cube"];
+  var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+  uniforms['tCube'].value= textureCube;   // textureCube has been init before
+  var material = new THREE.ShaderMaterial({
+      fragmentShader    : shader.fragmentShader,
+      vertexShader  : shader.vertexShader,
+      uniforms  : uniforms,
+      side : THREE.BackSide
+  });
+
+  // build the skybox Mesh
+  skyboxMesh = new THREE.Mesh( new THREE.BoxGeometry( 100000, 100000, 100000, 1, 1, 1, null, true ), material );
+  skyboxMesh.doubleSided = true;
+  // add it to the scene
+  scene.add(skyboxMesh);
+
+  //Sprite Loader
 	x = 0;
 	y = 1;
 	z = -2.5;
@@ -205,7 +185,16 @@ function init() {
 		async: false,
 		url: 'data.json',
 		success: function(data) {
-			for (var i = 0; i < data._embedded.artworks.length; i++) {`${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg?size=128x128`
+      timelineWorkspace = []
+      console.log(data._embedded.artworks[0].date.slice(0, 4))
+      for( var i = 0; i < data._embedded.artworks.length; i++){
+        timelineWorkspace.push([i, data._embedded.artworks[0].date.slice(0, 4)])
+      }
+      timelineWorkspace.sort(function(a, b) {
+        return a[1] - b[1];
+        console.log(timelineWorkspace)
+      });
+			for (var i = 0; i < data._embedded.artworks.length; i++) {`${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
         var image = `${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
 				var map = new THREE.TextureLoader().load(`${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`);
 				var material = new THREE.SpriteMaterial({
@@ -238,62 +227,15 @@ function init() {
         newSprite.scale.set(1, 1, 1)
 				scene.add(newSprite)
 			}
-			// console.log(data._embedded.artworks[0]);
-			// var testImage = data._embedded.artworks[0]._links.thumbnail.href;
-			// console.log(testImage)
-			// var img = document.createElement("img");
-			// img.src = testImage
-			// console.log(img)
-			// document.body.appendChild(img);
-
-
 
 		}
 	})
 
-	// for (var i =0; i<testArray.length; i++){
-	// 	var newSprite = new THREE.Sprite(material)
-	//
-	// 	if(x >= 0 && y > 0){
-	// 		x += 1;
-	//  		y -= 0.5;
-	// 	}
-	// 	else if (x > 0 && y <= 0) {
-	// 		x -= 1;
-	// 		y -= 0.5;
-	// 	}
-	// 	else if(x >= -3 && y < 0){
-	// 		x -= 1;
-	// 		y += 0.5;
-	// 	}
-	// 	else if (x < 0 && y >= 0){
-	// 		x += 1;
-	// 		y += 0.5;
-	// 	}
-	// 	z -= 2.5
-	// 	console.log(x,y,z)
-	// 	newSprite.position.set(x,y,z);
-	// 	// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-	// 	newSprite.receiveShadow = true;
-	// 	newSprite.castShadow = true;
-	// 	scene.add(newSprite)
-	// }
-	// Add the mesh to the scene.
 
-
-
-	// Move the camera to 0,0,-5 (the Y axis is "up")
-
-
-	// Point the camera to look at 0,0,0
-	// camera.lookAt(new THREE.Vector3(0,0,0));
-	// Alternatively, this also works:
-	// camera.lookAt(mesh.position);
-
-	// Creates the renderer with size 1280x720
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.setClearColor("white")
+
 	// Puts the "canvas" into our HTML page.
 	document.body.appendChild(renderer.domElement);
 
@@ -327,13 +269,12 @@ function onDocumentMouseDown( event ) {
 function onDocumentMouseOver( event ) {
   mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
   mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
   // find intersections
   raycaster.setFromCamera( mouse, camera );
   var intersects = raycaster.intersectObjects( scene.children );
 
   var whiteSpace = false
-  if(intersects[0]=== undefined){
+  if(intersects[0]=== undefined || intersects[0].object.type === "Mesh"){
     whiteSpace = true;
     if(speed === 0.01){
       speed = 0.02
@@ -342,16 +283,17 @@ function onDocumentMouseOver( event ) {
   ;
   if (whiteSpace === true){
   }
-  for ( var i = 0; i < intersects.length; i++ ) {
-    if(previousIntersect !== intersects[i].object.index){
+  else{
+    for ( var i = 0; i < intersects.length; i++ ) {
+      if(previousIntersect !== intersects[i].object.index){
+      }
+      else{
+      }
+      speed = 0.01;
+      previousIntersect = intersects[0].object.index;
     }
-    else{
-    }
-    speed = 0.01;
-    previousIntersect = intersects[0].object.index;
   }
 }
-
 
 
 function animate() {
