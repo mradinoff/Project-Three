@@ -281,13 +281,9 @@ function init() {
   // add it to the scene
   scene.add(skyboxMesh);
   //END SKYBOX CREATION
-<<<<<<< HEAD
-
-
-
+  
 const classic = () => {
-=======
->>>>>>> 287b451dd9bececa662bc22350e4e64542f52a23
+
 	x = 0;
 	y = 1;
 	z = -2.5;
