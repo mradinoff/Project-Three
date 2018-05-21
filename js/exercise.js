@@ -1,4 +1,6 @@
+const v1 = (collection) => {
 
+window.sr = ScrollReveal();
 raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2(), raycaster ;
 var scene, camera, renderer, mesh;
@@ -7,6 +9,21 @@ var backwards = false;
 var stop = false;
 var speed = 0.02;
 var previousIntersect = 1;
+var lastImagePosition = ""
+
+const popupAnimation = function() {
+  sr.reveal(".drop-in",
+  {
+    reset: false,
+    easing: 'linear',
+    delay: 300,
+    duration: 600,
+    interval: 200,
+    origin: 'bottom',
+  });
+}
+
+popupAnimation();
 
 var forwardsPress = function(changingSpeed) {
 	if (speed < 0 && backwards === true) {
@@ -45,6 +62,12 @@ var stopPress = function() {
 		stop = false
 	}
 }
+
+const menuAnimation = function () {
+	let popup = document.getElementById('popup')
+	popup.style.transform = 'translateX(0)';
+}
+
 const selecting = function(intersects){
   if (intersects[0].object.type !== "Sprite"){
   }
@@ -64,10 +87,15 @@ const selecting = function(intersects){
     var artistLowercase = artistAndTitle.slice(0, artistAndTitle.length - titleLength);
     //END GETIING ARTIST NAME
     var image = `${intersects[0].object.data._links.image.href.slice(0, intersects[0].object.data._links.image.href.length-19)}large.jpg`
-    document.getElementById('popup').style.display = "block";
-    $('#popup').append(`<h1 id="title">${intersects[0].object.data.title}</h1>`);
-    $('#popup').append(`<img id = "thumbnail" src=${image}>`);
-    $('#popup').append(`<h2 id="artist">${artistLowercase}</h2>`)
+
+
+		popupAnimation();
+		menuAnimation();
+		document.getElementById('popup-img').src = image;
+		document.getElementById('popup-artist').innerHTML = artistLowercase;
+		document.getElementById('popup-gallery').innerHTML = intersects[i].object.data.gallery;
+		document.getElementById('popup-title').innerHTML = intersects[0].object.data.title;
+
   }
 }
 
@@ -193,7 +221,7 @@ function init() {
 
         if (state.isClickDown === true){
           event.preventDefault();
-          document.getElementById('popup').style.display = "none";
+          // document.getElementById('popup').style.display = "none";
           let pointer = {}
           pointer.x = quaternion.x + 0.0;
           pointer.y = quaternion.y - 0.75;
@@ -254,6 +282,9 @@ function init() {
   scene.add(skyboxMesh);
   //END SKYBOX CREATION
 
+
+
+const classic = () => {
 	x = 0;
 	y = 1;
 	z = -2.5;
@@ -316,6 +347,83 @@ function init() {
 
 		}
 	})
+  lastImagePosition = scene.children[scene.children.length-1].position.z
+}
+
+const modern = () => {
+
+	x = 0;
+	y = 1;
+	z = -2.5;
+
+$.ajax({
+ type: 'GET',
+ dataType: 'json',
+ async: false,
+ url: 'modern.json',
+ success: function(data){
+	console.log(data);
+   for (var i = 0; i < data.length; i++) {
+     var image = new THREE.TextureLoader().load( data[i].image );
+     var map = new THREE.TextureLoader().load(`${image}`);
+     var material = new THREE.SpriteMaterial({
+       map: map,
+       color: 0xffffff,
+       fog: false
+     });
+     var newSprite = new THREE.Sprite(material)
+
+     if (x >= 0 && y > 0) {
+       x += 0.5;
+       y -= 0.25;
+     } else if (x > 0 && y <= 0) {
+       x -= 0.5;
+       y -= 0.25;
+     } else if (x >= -2 && y < 0) {
+       x -= 0.5;
+       y += 0.25;
+     } else if (x < 0 && y >= 0) {
+       x += 0.5;
+       y += 0.25;
+     }
+     z -= 2.5
+     newSprite.position.set(x, y, z);
+     newSprite.data = data;
+     newSprite.index = i + 1;
+     newSprite.modern = true;
+     // newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
+     newSprite.receiveShadow = true;
+     newSprite.castShadow = true;
+     newSprite.scale.set(1, 1, 1)
+
+     var imageFrame = `image/frame.jpg`
+     var mapFrame = new THREE.TextureLoader().load(`${imageFrame}`);
+     var materialFrame = new THREE.SpriteMaterial({
+       map: mapFrame,
+       color: 0xffffff,
+       fog: false
+     });
+     var frame = new THREE.Sprite(materialFrame);
+
+     frame.position.set(x, y, z);
+     // frame.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
+     frame.receiveShadow = true;
+     frame.castShadow = true;
+     frame.index = i + 1
+     frame.scale.set(1.25, 1.25, 1.25)
+     scene.add(newSprite)
+     scene.add(frame)
+
+   }
+
+ }
+})
+
+}
+
+document.getElementById('classic').onclick = function(){classic();};
+document.getElementById('modern').onclick = function(){modern();};
+
 
 
 	renderer = new THREE.WebGLRenderer();
@@ -332,9 +440,14 @@ function init() {
 
 function onDocumentMouseDown( event ) {
   event.preventDefault();
-  document.getElementById('popup').style.display = "none";
   mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
   mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+
+		if (popup.style.transform = 'translateX(0)' && event.target.id !== "popup") {
+			popup.style.transform = 'translateX(-100%)';
+		}
+
 
   // find intersections
   raycaster.setFromCamera( mouse, camera );
@@ -359,16 +472,41 @@ function onDocumentResize( event ){
 }
 
 function animate() {
+
 	if (backwards === false && stop === false) {
 		camera.position.z -= speed
 	};
+
 	if (backwards === true && stop === false) {
 		camera.position.z += speed
 	}
+
+	if( camera.position.z > 3){
+    backwards = false;
+  }
+
+	if (camera.position.z < lastImagePosition - 5){
+	 backwards = true
+ }
 
 	requestAnimationFrame(animate); // Tells the browser to smoothly render at 60Hz
 	renderer.render(scene, camera);
 }
 
+// animations >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+
+
 // When the page has loaded, run init();
 window.onload = init;
+
+
+	init();
+}
+
+
+
+window.onload = v1;

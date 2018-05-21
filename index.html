@@ -1,17 +1,43 @@
-<html>
-	<head>
-		<title>My first three.js app</title>
-		<link rel="stylesheet" href="css/master.css">
-		<style>
-		</style>
-	</head>
-	<body>
-		<div class="test"></div>
-		<div id="popup"></div>
-		<script src="js/jquery.js"></script>
-		<script src="js/daydream.js"></script>
-		<script src="js/threejs.js"></script>
-		<script src="js/exercise.js"></script>
-		<button id="button">Daydream</button>
-	</body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Threejs Gallery</title>
+</head>
+<body>
+  <div id="test"></div>
+    <div class="ontop">
+
+      <section class="overlay-div">
+        <!-- <p id="info-btn">info</p> -->
+        <p class="smalltext">gallery4</p>
+        <div id="collection-menu"><span id="modern"> Modern Collection </span> / <span id="classic"> 19th Century Collection </span> </div>
+      </section>
+
+    </div>
+
+    <div id="output"></div>
+
+    <div id="popup">
+      <img class="drop-in" id="popup-img"  alt="">
+      <div class="info">
+        <p class="drop-in" id="popup-artist">Artist</p>
+        <p class="drop-in" id="popup-gallery"></p>
+        <p class="drop-in" id="popup-title">Work</p>
+      </div>
+    </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.2.0/anime.min.js" charset="utf-8"></script>
+  <script src="https://unpkg.com/scrollreveal@4.0.0-beta.31/dist/scrollreveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.2/dat.gui.min.js" charset="utf-8"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/three-orbitcontrols@2.1.2/OrbitControls.min.js" charset="utf-8"></script> -->
+  <script src="js/jquery.js"></script>
+  <script src="js/daydream.js"></script>
+  <script src="js/threejs.js"></script>
+  <script src="js/exercise.js"></script>
+  <img id="button" src="image/daydream.png" alt="">
+</body>
 </html>
