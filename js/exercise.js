@@ -209,9 +209,9 @@ function init() {
 				}
         const motionOver = function(){
           let pointer = {}
-          pointer.x = quaternion.x + 0.0;
-          pointer.y = quaternion.y - 0.75;
-          pointer.z = quaternion.z - 0.25;
+          pointer.x = quaternion.x;
+          pointer.y = quaternion.y + 0.45;
+          pointer.z = quaternion.z;
           // find intersections
           raycaster.setFromCamera( pointer, camera);
           var intersects = raycaster.intersectObjects( scene.children );
@@ -223,9 +223,9 @@ function init() {
           event.preventDefault();
           // document.getElementById('popup').style.display = "none";
           let pointer = {}
-          pointer.x = quaternion.x + 0.0;
-          pointer.y = quaternion.y - 0.75;
-          pointer.z = quaternion.z - 0.25;
+          pointer.x = quaternion.x;
+          pointer.y = quaternion.y + 0.45;
+          pointer.z = quaternion.z;
 
           // find intersections
           raycaster.setFromCamera( pointer, camera);
@@ -281,10 +281,13 @@ function init() {
   // add it to the scene
   scene.add(skyboxMesh);
   //END SKYBOX CREATION
+<<<<<<< HEAD
 
 
 
 const classic = () => {
+=======
+>>>>>>> 287b451dd9bececa662bc22350e4e64542f52a23
 	x = 0;
 	y = 1;
 	z = -2.5;
