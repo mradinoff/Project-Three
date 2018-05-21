@@ -281,7 +281,7 @@ function init() {
   // add it to the scene
   scene.add(skyboxMesh);
   //END SKYBOX CREATION
-  
+
 const classic = () => {
 
 	x = 0;
@@ -492,16 +492,11 @@ function animate() {
 	renderer.render(scene, camera);
 }
 
-// animations >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-
 
 
 
 // When the page has loaded, run init();
 window.onload = init;
-
 
 	init();
 }
