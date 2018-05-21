@@ -6,7 +6,7 @@ var skyboxMesh;
 var backwards = false;
 var stop = false;
 var speed = 0.02;
-var previousIntersect = "";
+var previousIntersect = 1;
 
 var forwardsPress = function(changingSpeed) {
 	if (speed < 0 && backwards === true) {
@@ -80,22 +80,23 @@ const cursorOver = function(intersects, sceneChildren){
     }
   }
   ;
+
   if (whiteSpace === true ){
+    scene.children[(previousIntersect*2)].material.opacity=1
     scene.children[(previousIntersect*2)+ 1].material.opacity=1
-    scene.children[(previousIntersect*2)+ 2].material.opacity=1
   }
   else{
     if(previousIntersect !== intersects[0].object.index) {
+      scene.children[(previousIntersect*2)].material.opacity=1
       scene.children[(previousIntersect*2)+ 1].material.opacity=1
-      scene.children[(previousIntersect*2)+ 2].material.opacity=1
-      previousIntersect = (intersects[0].object.index);
+      previousIntersect = intersects[0].object.index;
 
     }
-    if (previousIntersect === intersects[0].object.index || previousIntersect == ""){
+    if (previousIntersect === intersects[0].object.index){
     speed = 0.01;
-    previousIntersect = (intersects[0].object.index);
+    previousIntersect = intersects[0].object.index;
+    scene.children[(previousIntersect*2)].material.opacity=0.7
     scene.children[(previousIntersect*2)+ 1].material.opacity=0.7
-    scene.children[(previousIntersect*2)+ 2].material.opacity=0.7
     }
   }
 }
@@ -153,7 +154,7 @@ function init() {
 	const lightHelper = new THREE.PointLightHelper(light);
   var vector = new THREE.Vector3(); // create once and reuse it!
 
-	// Add daydream controller
+	// ADD DAY
 	$('#button').on('click', function() {
 		var controller = new DaydreamController();
 		controller.onStateChange(function(state) {
@@ -226,9 +227,9 @@ function init() {
 
 		controller.connect();
 	});
+  //END DAYDREAM CONTROLLER
 
-	var axesHelper = new THREE.AxesHelper(5);
-	scene.add(axesHelper);
+  //START SKYBOX CREATION
 
   var urls = [ "skybox/px.jpg", "skybox/nx.jpg",
       "skybox/py.jpg", "skybox/ny.jpg",
@@ -251,7 +252,7 @@ function init() {
   skyboxMesh.doubleSided = true;
   // add it to the scene
   scene.add(skyboxMesh);
-
+  //END SKYBOX CREATION
 
 	x = 0;
 	y = 1;
