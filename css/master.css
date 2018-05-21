@@ -26,3 +26,6 @@ canvas{
 #popup img{
   width: 18vw;
 }
+#popup #artist{
+  text-transform: capitalize;
+}

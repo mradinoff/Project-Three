@@ -1,6 +1,3 @@
-//FOR ARTSY API
-var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IiIsImV4cCI6MTUyNjk2NzU4MywiaWF0IjoxNTI2MzYyNzgzLCJhdWQiOiI1YWY0ZWFkN2EwOWE2NzZjODA4N2Y0YzAiLCJpc3MiOiJHcmF2aXR5IiwianRpIjoiNWFmYTcyOWY5YzE4ZGIyMDJlN2NjMTg5In0.zLuLtEdlB2dnD_u7VahsjNiW0RlaCu7avNn4Az_7icE"
-var clientID = "b672dc2e7f242760d0d6"
 
 raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2(), raycaster ;
@@ -9,8 +6,7 @@ var skyboxMesh;
 var backwards = false;
 var stop = false;
 var speed = 0.02;
-var previousIntersect = -1;
-let timelineWorkspace = []
+var previousIntersect = "";
 
 var forwardsPress = function(changingSpeed) {
 	if (speed < 0 && backwards === true) {
@@ -49,10 +45,65 @@ var stopPress = function() {
 		stop = false
 	}
 }
+const selecting = function(intersects){
+  if (intersects[0].object.type !== "Sprite"){
+  }
+  else{
+    console.log(intersects[0].object)
+    $('#close').remove();
+    $('#title').remove();
+    $('#thumbnail').remove();
+    $('#artist').remove();
+
+    //Getting Artist Name
+    //slug = name-name-title-title-title format
+    var artistAndTitleArray = intersects[ 0 ].object.data.slug.split("-")
+    var titleArray = intersects[0].object.data.title.split(" ")
+    var artistAndTitle = intersects[ 0 ].object.data.slug.split("-").join(" ");
+    var titleLength = intersects[0].object.data.title.split(" ").join(" ").length;
+    var artistLowercase = artistAndTitle.slice(0, artistAndTitle.length - titleLength);
+    //END GETIING ARTIST NAME
+    var image = `${intersects[0].object.data._links.image.href.slice(0, intersects[0].object.data._links.image.href.length-19)}large.jpg`
+    document.getElementById('popup').style.display = "block";
+    $('#popup').append(`<h1 id="title">${intersects[0].object.data.title}</h1>`);
+    $('#popup').append(`<img id = "thumbnail" src=${image}>`);
+    $('#popup').append(`<h2 id="artist">${artistLowercase}</h2>`)
+  }
+}
+
+const cursorOver = function(intersects, sceneChildren){
+  var whiteSpace = false
+  if(intersects[0]=== undefined || intersects[0].object.type === "Mesh"){
+    whiteSpace = true;
+    if(speed === 0.01){
+      speed = 0.02
+    }
+  }
+  ;
+  if (whiteSpace === true ){
+    scene.children[(previousIntersect*2)+ 1].material.opacity=1
+    scene.children[(previousIntersect*2)+ 2].material.opacity=1
+  }
+  else{
+    if(previousIntersect !== intersects[0].object.index) {
+      scene.children[(previousIntersect*2)+ 1].material.opacity=1
+      scene.children[(previousIntersect*2)+ 2].material.opacity=1
+      previousIntersect = (intersects[0].object.index);
+
+    }
+    if (previousIntersect === intersects[0].object.index || previousIntersect == ""){
+    speed = 0.01;
+    previousIntersect = (intersects[0].object.index);
+    scene.children[(previousIntersect*2)+ 1].material.opacity=0.7
+    scene.children[(previousIntersect*2)+ 2].material.opacity=0.7
+    }
+  }
+}
 
 //
 document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 document.addEventListener( 'mousemove', onDocumentMouseOver);
+window.addEventListener( 'resize', onDocumentResize);
 
 
 document.addEventListener("keypress", function(event) {
@@ -100,9 +151,10 @@ function init() {
 	light.shadow.mapSize.height = 2048;
 	scene.add(light);
 	const lightHelper = new THREE.PointLightHelper(light);
+  var vector = new THREE.Vector3(); // create once and reuse it!
+
 	// Add daydream controller
 	$('#button').on('click', function() {
-		console.log("Initialise daydream");
 		var controller = new DaydreamController();
 		controller.onStateChange(function(state) {
 			if (camera !== undefined) {
@@ -119,15 +171,37 @@ function init() {
 				} else {
 					quaternion.set(0, 0, 0, 1);
 				}
-				if (state.yTouch > 0.5) { //when down is pressed
+				if (state.isVolMinusDown) { //when down is pressed
 					backwardsPress(0.001);
 				}
 
-				if (state.yTouch < 0.5 && state.yTouch > 0) { //When up is pressed
+				if (state.isVolPlusDown) { //When up is pressed
 					forwardsPress(0.001);
 				}
-        if (state.isVolMinusDown === true){
-          stopPress();
+        const motionOver = function(){
+          let pointer = {}
+          pointer.x = quaternion.x + 0.0;
+          pointer.y = quaternion.y - 0.75;
+          pointer.z = quaternion.z - 0.25;
+          // find intersections
+          raycaster.setFromCamera( pointer, camera);
+          var intersects = raycaster.intersectObjects( scene.children );
+          cursorOver(intersects);
+        }
+        motionOver();
+
+        if (state.isClickDown === true){
+          event.preventDefault();
+          document.getElementById('popup').style.display = "none";
+          let pointer = {}
+          pointer.x = quaternion.x + 0.0;
+          pointer.y = quaternion.y - 0.75;
+          pointer.z = quaternion.z - 0.25;
+
+          // find intersections
+          raycaster.setFromCamera( pointer, camera);
+          var intersects = raycaster.intersectObjects( scene.children );
+          selecting(intersects);
         }
 				if (state.isHomeDown) {
 					if (timeout === null) {
@@ -159,6 +233,7 @@ function init() {
   var urls = [ "skybox/px.jpg", "skybox/nx.jpg",
       "skybox/py.jpg", "skybox/ny.jpg",
       "skybox/pz.jpg", "skybox/nz.jpg" ];
+
   var textureCube = THREE.ImageUtils.loadTextureCube(urls);
   var shader = THREE.ShaderLib["cube"];
   var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
@@ -170,13 +245,14 @@ function init() {
       side : THREE.BackSide
   });
 
+
   // build the skybox Mesh
   skyboxMesh = new THREE.Mesh( new THREE.BoxGeometry( 100000, 100000, 100000, 1, 1, 1, null, true ), material );
   skyboxMesh.doubleSided = true;
   // add it to the scene
   scene.add(skyboxMesh);
 
-  //Sprite Loader
+
 	x = 0;
 	y = 1;
 	z = -2.5;
@@ -186,22 +262,9 @@ function init() {
 		async: false,
 		url: 'data.json',
 		success: function(data) {
-
-      console.log(data._embedded.artworks[0].date.slice(0, 4))
-      for( var i = 0; i < data._embedded.artworks.length; i++){
-          if  (data._embedded.artworks[i].date.slice(0, 4) === ""){
-          }
-          else{
-          timelineWorkspace.push([i, data._embedded.artworks[i].date.slice(0, 4)])
-        }
-      }
-      timelineWorkspace.sort(function(a, b) {
-        return a[1] - b[1];
-      });
-      console.log(timelineWorkspace)
-			for (var i = 0; i < timelineWorkspace.length; i++) {`${data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.slice(0, data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.length-19)}square.jpg`
-        var image = `${data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.slice(0, data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.length-19)}square.jpg`
-				var map = new THREE.TextureLoader().load(`${data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.slice(0, data._embedded.artworks[timelineWorkspace[i][0]]._links.image.href.length-19)}square.jpg`);
+			for (var i = 0; i < data._embedded.artworks.length; i++) {`${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
+        var image = `${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
+				var map = new THREE.TextureLoader().load(`${image}`);
 				var material = new THREE.SpriteMaterial({
 					map: map,
 					color: 0xffffff,
@@ -224,14 +287,30 @@ function init() {
 				}
 				z -= 2.5
 				newSprite.position.set(x, y, z);
-        console.log(data._embedded.artworks[timelineWorkspace[i][0]])
-        newSprite.data = data._embedded.artworks[timelineWorkspace[i][0]];
-        newSprite.index = [timelineWorkspace[i][0]];
+        newSprite.data = data._embedded.artworks[i];
+        newSprite.index = i + 1;
 				// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
 				newSprite.receiveShadow = true;
 				newSprite.castShadow = true;
         newSprite.scale.set(1, 1, 1)
+
+        var imageFrame = `image/frame.jpg`
+				var mapFrame = new THREE.TextureLoader().load(`${imageFrame}`);
+				var materialFrame = new THREE.SpriteMaterial({
+					map: mapFrame,
+					color: 0xffffff,
+					fog: false
+				});
+        var frame = new THREE.Sprite(materialFrame);
+
+        frame.position.set(x, y, z);
+				// frame.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
+				frame.receiveShadow = true;
+				frame.castShadow = true;
+        frame.index = i + 1
+        frame.scale.set(1.25, 1.25, 1.25)
 				scene.add(newSprite)
+        scene.add(frame)
 			}
 
 		}
@@ -240,7 +319,6 @@ function init() {
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize(window.innerWidth, window.innerHeight);
-	renderer.setClearColor("white")
 
 	// Puts the "canvas" into our HTML page.
 	document.body.appendChild(renderer.domElement);
@@ -256,18 +334,11 @@ function onDocumentMouseDown( event ) {
   document.getElementById('popup').style.display = "none";
   mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
   mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
   // find intersections
   raycaster.setFromCamera( mouse, camera );
   var intersects = raycaster.intersectObjects( scene.children );
-  $('#close').remove();
-  $('#title').remove();
-  $('#thumbnail').remove();
-  console.log(intersects)
-  console.log(intersects[0].object.data._links.image.href)
-  var image = `${intersects[0].object.data._links.image.href.slice(0, intersects[0].object.data._links.image.href.length-19)}large.jpg`
-  document.getElementById('popup').style.display = "block";
-  $('#popup').append(`<h1 id="title">${intersects[0].object.data.title}</h1>`);
-  $('#popup').append(`<img id = "thumbnail" src=${image}>`);
+  selecting(intersects);
 
 }
 // xxxxxxx
@@ -278,26 +349,13 @@ function onDocumentMouseOver( event ) {
   raycaster.setFromCamera( mouse, camera );
   var intersects = raycaster.intersectObjects( scene.children );
 
-  var whiteSpace = false
-  if(intersects[0]=== undefined || intersects[0].object.type === "Mesh"){
-    whiteSpace = true;
-    if(speed === 0.01){
-      speed = 0.02
-    }
-  }
-  ;
-  if (whiteSpace === true){
-  }
-  else{
-    if(previousIntersect !== intersects[0].object.index){
-    }
-    else{
-    }
-    speed = 0.01;
-    previousIntersect = intersects[0].object.index;
-  }
+  cursorOver(intersects, scene.children);
 }
 
+function onDocumentResize( event ){
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 100000);
+}
 
 function animate() {
 	if (backwards === false && stop === false) {
@@ -306,6 +364,7 @@ function animate() {
 	if (backwards === true && stop === false) {
 		camera.position.z += speed
 	}
+
 	requestAnimationFrame(animate); // Tells the browser to smoothly render at 60Hz
 	renderer.render(scene, camera);
 }
