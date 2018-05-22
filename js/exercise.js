@@ -294,7 +294,7 @@ function init() {
   //END SKYBOX CREATION
 
 const classic = () => { //CLEARS THE SCENE
-  modernRunning = true;
+  modernRunning = false;
   x = 0;
 	y = 1;
 	z = -7.5;
