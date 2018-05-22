@@ -85,7 +85,7 @@ const selecting = function(intersects){
       var artistLowercase = artistAndTitle.slice(0, artistAndTitle.length - titleLength);
       //END GETIING ARTIST NAME
       var image = `${intersects[0].object.data._links.image.href.slice(0, intersects[0].object.data._links.image.href.length-19)}large.jpg`
-      console.log(intersects[0].object.data.gallery)
+      console.log(image)
       document.getElementById('popup-artist').innerHTML = artistLowercase;
       document.getElementById('popup-img').src = image;
     }
@@ -293,11 +293,10 @@ function init() {
   scene.add(skyboxMesh);
   //END SKYBOX CREATION
 
-const classic = () => {
-
+const classic = () => { //CLEARS THE SCENE
 	x = 0;
 	y = 1;
-	z = -7.5;
+	z = -2.5;
 	$.ajax({
 		type: 'GET',
 		dataType: 'json',
@@ -425,8 +424,18 @@ const modern = () => {
  lastImagePosition = scene.children[scene.children.length-1].position.z
 
 }
-document.getElementById('classic').onclick = function(){classic();};
-document.getElementById('modern').onclick = function(){modern();};
+document.getElementById('classic').onclick = function(){
+  for( var i = scene.children.length - 1; i >= 0; i--) {
+  scene.remove(scene.children[2]);
+ }
+  classic();
+};
+document.getElementById('modern').onclick = function(){
+  for( var i = scene.children.length - 1; i >= 0; i--) {
+  scene.remove(scene.children[2]);
+ }
+  modern();
+};
 
 
 
