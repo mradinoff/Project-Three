@@ -336,11 +336,10 @@ const classic = () => {
   				});
           var frame = new THREE.Sprite(materialFrame);
           frame.position.set(x, y, z);
-  				// frame.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
           frame.index = i + 1
           frame.scale.set(1.25, 1.25, 1.25)
   				scene.add(newSprite)
-          // scene.add(frame)
+          scene.add(frame)
   			}
       }
 		}
@@ -405,7 +404,6 @@ $.ajax({
      var frame = new THREE.Sprite(materialFrame);
 
      frame.position.set(x, y, z);
-     // frame.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
      frame.receiveShadow = true;
      frame.castShadow = true;
      frame.index = i + 1
