@@ -169,18 +169,18 @@ function init() {
 
 
 
-	// A Mesh is made up of a geometry and a material.
-	// Materials affect how the geometry looks, especially under lights.
-
-	const light = new THREE.PointLight("#f7f3a3");
-	light.position.set(-20, 30, 0);
-	light.intensity = 3;
-	light.castShadow = true;
-	light.shadow.mapSize.width = 2048;
-	light.shadow.mapSize.height = 2048;
-	scene.add(light);
-	const lightHelper = new THREE.PointLightHelper(light);
-  var vector = new THREE.Vector3(); // create once and reuse it!
+	// // A Mesh is made up of a geometry and a material.
+	// // Materials affect how the geometry looks, especially under lights.
+  //
+	// const light = new THREE.PointLight("#f7f3a3");
+	// light.position.set(-20, 30, 0);
+	// light.intensity = 3;
+	// light.castShadow = true;
+	// light.shadow.mapSize.width = 2048;
+	// light.shadow.mapSize.height = 2048;
+	// scene.add(light);
+	// const lightHelper = new THREE.PointLightHelper(light);
+  // var vector = new THREE.Vector3(); // create once and reuse it!
 
 	// ADD DAY
 	$('#button').on('click', function() {
