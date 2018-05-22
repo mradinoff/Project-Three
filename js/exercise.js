@@ -387,7 +387,7 @@ $.ajax({
      }
      z -= 2.5
      newSprite.position.set(x, y, z);
-     newSprite.data = data;
+     newSprite.data = data[i];
      newSprite.index = i + 1;
      newSprite.modern = true;
      // newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
