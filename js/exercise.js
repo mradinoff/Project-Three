@@ -443,6 +443,8 @@ document.getElementById('classic').onclick = function(){
   for( var i = scene.children.length - 1; i >= 0; i--) {
   scene.remove(scene.children[2]);
  }
+ speed = 0.02;
+ backwards = false;
  camera.position.z = 0;
  classic();
 };
@@ -450,6 +452,8 @@ document.getElementById('modern').onclick = function(){
   for( var i = scene.children.length - 1; i >= 0; i--) {
   scene.remove(scene.children[2]);
  }
+  speed = 0.02;
+  backwards = false;
   camera.position.z = 0;
   modern();
 };
