@@ -328,18 +328,18 @@ const classic = () => {
           newSprite.scale.set(1, 1, 1)
 
 
-  				// var mapFrame = new THREE.TextureLoader().load(`${imageFrame}`);
-  				// var materialFrame = new THREE.SpriteMaterial({
-  				// 	map: mapFrame,
-  				// 	color: 0xffffff,
-  				// 	fog: false
-  				// });
-          // var frame = new THREE.Sprite(materialFrame);
-          // frame.position.set(x, y, z);
-          // frame.index = i + 1
-          // frame.scale.set(1.25, 1.25, 1.25)
-  				// scene.add(newSprite)
-          // scene.add(frame)
+  				var mapFrame = new THREE.TextureLoader().load(`${imageFrame}`);
+  				var materialFrame = new THREE.SpriteMaterial({
+  					map: mapFrame,
+  					color: 0xffffff,
+  					fog: false
+  				});
+          var frame = new THREE.Sprite(materialFrame);
+          frame.position.set(x, y, z);
+          frame.index = i + 1
+          frame.scale.set(1.25, 1.25, 1.25)
+  				scene.add(newSprite)
+          scene.add(frame)
   			}
       }
 		}
@@ -394,23 +394,23 @@ $.ajax({
      newSprite.castShadow = true;
      newSprite.scale.set(1, 1, 1)
 
-   //   var imageFrame = `image/frame.jpg`
-   //   var mapFrame = new THREE.TextureLoader().load(`${imageFrame}`);
-   //   var materialFrame = new THREE.SpriteMaterial({
-   //     map: mapFrame,
-   //     color: 0xffffff,
-   //     fog: false
-   //   });
-   //   var frame = new THREE.Sprite(materialFrame);
-   //
-   //   frame.position.set(x, y, z);
-   //   frame.receiveShadow = true;
-   //   frame.castShadow = true;
-   //   frame.index = i + 1
-   //   frame.scale.set(1.25, 1.25, 1.25)
-   //   scene.add(newSprite)
-   //   scene.add(frame)
-   // }
+     var imageFrame = `image/frame.jpg`
+     var mapFrame = new THREE.TextureLoader().load(`${imageFrame}`);
+     var materialFrame = new THREE.SpriteMaterial({
+       map: mapFrame,
+       color: 0xffffff,
+       fog: false
+     });
+     var frame = new THREE.Sprite(materialFrame);
+
+     frame.position.set(x, y, z);
+     frame.receiveShadow = true;
+     frame.castShadow = true;
+     frame.index = i + 1
+     frame.scale.set(1.25, 1.25, 1.25)
+     scene.add(newSprite)
+     scene.add(frame)
+   }
 
  }
 })
