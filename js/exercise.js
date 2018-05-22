@@ -291,7 +291,7 @@ const classic = () => {
 		type: 'GET',
 		dataType: 'json',
 		async: false,
-		url: 'data.json',
+		url: 'classic.json',
 		success: function(data) {
       console.log(data)
 			for (var i = 0; i < data._embedded.artworks.length; i++) {
