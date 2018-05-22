@@ -93,7 +93,7 @@ const selecting = function(intersects){
 		menuAnimation();
 		document.getElementById('popup-img').src = image;
 		document.getElementById('popup-artist').innerHTML = artistLowercase;
-		document.getElementById('popup-gallery').innerHTML = intersects[0].object.data.collecting_institution;
+		document.getElementById('popup-gallery').innerHTML = intersects[0].object.data.gallery;
 		document.getElementById('popup-title').innerHTML = intersects[0].object.data.title;
 
   }
@@ -169,18 +169,18 @@ function init() {
 
 
 
-	// // A Mesh is made up of a geometry and a material.
-	// // Materials affect how the geometry looks, especially under lights.
-  //
-	// const light = new THREE.PointLight("#f7f3a3");
-	// light.position.set(-20, 30, 0);
-	// light.intensity = 3;
-	// light.castShadow = true;
-	// light.shadow.mapSize.width = 2048;
-	// light.shadow.mapSize.height = 2048;
-	// scene.add(light);
-	// const lightHelper = new THREE.PointLightHelper(light);
-  // var vector = new THREE.Vector3(); // create once and reuse it!
+	// A Mesh is made up of a geometry and a material.
+	// Materials affect how the geometry looks, especially under lights.
+
+	const light = new THREE.PointLight("#f7f3a3");
+	light.position.set(-20, 30, 0);
+	light.intensity = 3;
+	light.castShadow = true;
+	light.shadow.mapSize.width = 2048;
+	light.shadow.mapSize.height = 2048;
+	scene.add(light);
+	const lightHelper = new THREE.PointLightHelper(light);
+  var vector = new THREE.Vector3(); // create once and reuse it!
 
 	// ADD DAY
 	$('#button').on('click', function() {
@@ -293,59 +293,59 @@ const classic = () => {
 		async: false,
 		url: 'data.json',
 		success: function(data) {
+      console.log(data)
 			for (var i = 0; i < data._embedded.artworks.length; i++) {
-        var image = `${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
-				var map = new THREE.TextureLoader().load(`${image}`);
-				var material = new THREE.SpriteMaterial({
-					map: map,
-					color: 0xffffff,
-					fog: false
-				});
-				var newSprite = new THREE.Sprite(material)
+        if (data._embedded.artworks[i]._links.image == undefined){
+        }
+        else{
+          var image = `${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
+  				var map = new THREE.TextureLoader().load(`${image}`);
+  				var material = new THREE.SpriteMaterial({
+  					map: map,
+  					color: 0xffffff,
+  					fog: false
+  				});
+  				var newSprite = new THREE.Sprite(material)
 
-				if (x >= 0 && y > 0) {
-					x += 0.5;
-					y -= 0.25;
-				} else if (x > 0 && y <= 0) {
-					x -= 0.5;
-					y -= 0.25;
-				} else if (x >= -2 && y < 0) {
-					x -= 0.5;
-					y += 0.25;
-				} else if (x < 0 && y >= 0) {
-					x += 0.5;
-					y += 0.25;
-				}
-				z -= 2.5
-				newSprite.position.set(x, y, z);
-        newSprite.data = data._embedded.artworks[i];
-        newSprite.index = i + 1;
-				// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-				// newSprite.receiveShadow = true;
-				// newSprite.castShadow = true;
-        newSprite.scale.set(1, 1, 1)
+  				if (x >= 0 && y > 0) {
+  					x += 0.5;
+  					y -= 0.25;
+  				} else if (x > 0 && y <= 0) {
+  					x -= 0.5;
+  					y -= 0.25;
+  				} else if (x >= -2 && y < 0) {
+  					x -= 0.5;
+  					y += 0.25;
+  				} else if (x < 0 && y >= 0) {
+  					x += 0.5;
+  					y += 0.25;
+  				}
+  				z -= 2.5
+  				newSprite.position.set(x, y, z);
+          newSprite.data = data._embedded.artworks[i];
+          newSprite.index = i + 1;
+  				// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
+          newSprite.scale.set(1, 1, 1)
 
-        var imageFrame = `image/frame.jpg`
-				var mapFrame = new THREE.TextureLoader().load(`${imageFrame}`);
-				var materialFrame = new THREE.SpriteMaterial({
-					map: mapFrame,
-					color: 0xffffff,
-					fog: false
-				});
-        var frame = new THREE.Sprite(materialFrame);
-
-        frame.position.set(x, y, z);
-				// frame.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-				// frame.receiveShadow = true;
-				// frame.castShadow = true;
-        frame.index = i + 1
-        frame.scale.set(1.25, 1.25, 1.25)
-				scene.add(newSprite)
-        scene.add(frame)
-			}
-
+          var imageFrame = `image/frame.jpg`
+  				var mapFrame = new THREE.TextureLoader().load(`${imageFrame}`);
+  				var materialFrame = new THREE.SpriteMaterial({
+  					map: mapFrame,
+  					color: 0xffffff,
+  					fog: false
+  				});
+          var frame = new THREE.Sprite(materialFrame);
+          frame.position.set(x, y, z);
+  				// frame.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
+          frame.index = i + 1
+          frame.scale.set(1.25, 1.25, 1.25)
+  				scene.add(newSprite)
+          // scene.add(frame)
+  			}
+      }
 		}
 	})
+  console.log(scene.children)
   lastImagePosition = scene.children[scene.children.length-1].position.z
 }
 
@@ -387,12 +387,12 @@ $.ajax({
      }
      z -= 2.5
      newSprite.position.set(x, y, z);
-     newSprite.data = data[i];
+     newSprite.data = data;
      newSprite.index = i + 1;
      newSprite.modern = true;
      // newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-     // newSprite.receiveShadow = true;
-     // newSprite.castShadow = true;
+     newSprite.receiveShadow = true;
+     newSprite.castShadow = true;
      newSprite.scale.set(1, 1, 1)
 
      var imageFrame = `image/frame.jpg`
@@ -406,20 +406,18 @@ $.ajax({
 
      frame.position.set(x, y, z);
      // frame.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-     // frame.receiveShadow = true;
-     // frame.castShadow = true;
+     frame.receiveShadow = true;
+     frame.castShadow = true;
      frame.index = i + 1
      frame.scale.set(1.25, 1.25, 1.25)
      scene.add(newSprite)
      scene.add(frame)
-
    }
 
  }
 })
 
 }
-console.log(scene.children)
 document.getElementById('classic').onclick = function(){classic();};
 document.getElementById('modern').onclick = function(){modern();};
 
