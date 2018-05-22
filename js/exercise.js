@@ -72,9 +72,10 @@ const menuAnimation = function () {
 
 const selecting = function(intersects){
   if (intersects[0].object.type !== "Sprite"){
+
   }
   else{
-    console.log(intersects[0].object)
+
     //Getting Artist Name
     //slug = name-name-title-title-title format
     if(modernRunning === false){
@@ -86,18 +87,16 @@ const selecting = function(intersects){
       //END GETIING ARTIST NAME
       var image = `${intersects[0].object.data._links.image.href.slice(0, intersects[0].object.data._links.image.href.length-19)}large.jpg`
       document.getElementById('popup-artist').innerHTML = artistLowercase;
-      document.getElementById('popup-img').src = image;
-      console.log ("running")
+      $('.info').prepend(`<img id='popup-img' src=${image}>`)
     }
 
     else{
       var image = intersects[0].object.data.image;
       var artist = intersects[0].object.data.artist;
       document.getElementById('popup-artist').innerHTML = artist;
-      document.getElementById('popup-img').src = image;
+      $('.info').prepend(`<img id='popup-img' src=${image}>`)
     }
-	  popupAnimation();
-	  menuAnimation();
+
 		document.getElementById('popup-title').innerHTML = intersects[0].object.data.title;
     if(intersects[0].object.data.gallery == undefined){
       document.getElementById('popup-gallery').innerHTML = "";
@@ -105,6 +104,8 @@ const selecting = function(intersects){
     else{
     document.getElementById('popup-gallery').innerHTML = intersects[0].object.data.gallery;
     }
+    popupAnimation();
+    menuAnimation();
   }
 }
 
@@ -472,6 +473,7 @@ function onDocumentMouseDown( event ) {
 
 		if (popup.style.transform = 'translateX(0)' && event.target.id !== "popup") {
 			popup.style.transform = 'translateX(-100%)';
+      $('#popup-img').remove()
 		}
 
 
