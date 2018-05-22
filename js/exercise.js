@@ -93,7 +93,7 @@ const selecting = function(intersects){
 		menuAnimation();
 		document.getElementById('popup-img').src = image;
 		document.getElementById('popup-artist').innerHTML = artistLowercase;
-		document.getElementById('popup-gallery').innerHTML = intersects[i].object.data.gallery;
+		document.getElementById('popup-gallery').innerHTML = intersects[0].object.data.collecting_institution;
 		document.getElementById('popup-title').innerHTML = intersects[0].object.data.title;
 
   }
