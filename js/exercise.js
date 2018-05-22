@@ -85,24 +85,22 @@ const selecting = function(intersects){
       var artistLowercase = artistAndTitle.slice(0, artistAndTitle.length - titleLength);
       //END GETIING ARTIST NAME
       var image = `${intersects[0].object.data._links.image.href.slice(0, intersects[0].object.data._links.image.href.length-19)}large.jpg`
-      console.log(image)
       document.getElementById('popup-artist').innerHTML = artistLowercase;
       document.getElementById('popup-img').src = image;
+      console.log ("running")
     }
 
     else{
       var image = intersects[0].object.data.image;
-      console.log(image)
       var artist = intersects[0].object.data.artist;
       document.getElementById('popup-artist').innerHTML = artist;
       document.getElementById('popup-img').src = image;
     }
-
 	  popupAnimation();
 	  menuAnimation();
 		document.getElementById('popup-title').innerHTML = intersects[0].object.data.title;
     if(intersects[0].object.data.gallery == undefined){
-
+      document.getElementById('popup-gallery').innerHTML = "";
     }
     else{
     document.getElementById('popup-gallery').innerHTML = intersects[0].object.data.gallery;
@@ -287,7 +285,7 @@ function init() {
 
 
   // build the skybox Mesh
-  skyboxMesh = new THREE.Mesh( new THREE.BoxGeometry( 10000, 10000, 10000, 1, 1, 1, null, true ), material );
+  skyboxMesh = new THREE.Mesh( new THREE.BoxGeometry( 15000, 15000, 15000, 1, 1, 1, null, true ), material );
   skyboxMesh.doubleSided = true;
   // add it to the scene
   scene.add(skyboxMesh);
