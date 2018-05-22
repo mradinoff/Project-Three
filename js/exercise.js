@@ -10,6 +10,8 @@ var stop = false;
 var speed = 0.02;
 var previousIntersect = 1;
 var lastImagePosition = ""
+var imageFrame = `image/frame.jpg`
+let modernRunning = false;
 
 const popupAnimation = function() {
   sr.reveal(".drop-in",
@@ -73,29 +75,38 @@ const selecting = function(intersects){
   }
   else{
     console.log(intersects[0].object)
-    $('#close').remove();
-    $('#title').remove();
-    $('#thumbnail').remove();
-    $('#artist').remove();
-
     //Getting Artist Name
     //slug = name-name-title-title-title format
-    var artistAndTitleArray = intersects[ 0 ].object.data.slug.split("-")
-    var titleArray = intersects[0].object.data.title.split(" ")
-    var artistAndTitle = intersects[ 0 ].object.data.slug.split("-").join(" ");
-    var titleLength = intersects[0].object.data.title.split(" ").join(" ").length;
-    var artistLowercase = artistAndTitle.slice(0, artistAndTitle.length - titleLength);
-    //END GETIING ARTIST NAME
-    var image = `${intersects[0].object.data._links.image.href.slice(0, intersects[0].object.data._links.image.href.length-19)}large.jpg`
+    if(modernRunning === false){
+      var artistAndTitleArray = intersects[ 0 ].object.data.slug.split("-")
+      var titleArray = intersects[0].object.data.title.split(" ")
+      var artistAndTitle = intersects[ 0 ].object.data.slug.split("-").join(" ");
+      var titleLength = intersects[0].object.data.title.split(" ").join(" ").length;
+      var artistLowercase = artistAndTitle.slice(0, artistAndTitle.length - titleLength);
+      //END GETIING ARTIST NAME
+      var image = `${intersects[0].object.data._links.image.href.slice(0, intersects[0].object.data._links.image.href.length-19)}large.jpg`
+      console.log(intersects[0].object.data.gallery)
+      document.getElementById('popup-artist').innerHTML = artistLowercase;
+      document.getElementById('popup-img').src = image;
+    }
 
+    else{
+      var image = intersects[0].object.data.image;
+      console.log(image)
+      var artist = intersects[0].object.data.artist;
+      document.getElementById('popup-artist').innerHTML = artist;
+      document.getElementById('popup-img').src = image;
+    }
 
-		popupAnimation();
-		menuAnimation();
-		document.getElementById('popup-img').src = image;
-		document.getElementById('popup-artist').innerHTML = artistLowercase;
-		document.getElementById('popup-gallery').innerHTML = intersects[0].object.data.gallery;
+	  popupAnimation();
+	  menuAnimation();
 		document.getElementById('popup-title').innerHTML = intersects[0].object.data.title;
+    if(intersects[0].object.data.gallery == undefined){
 
+    }
+    else{
+    document.getElementById('popup-gallery').innerHTML = intersects[0].object.data.gallery;
+    }
   }
 }
 
@@ -286,7 +297,7 @@ const classic = () => {
 
 	x = 0;
 	y = 1;
-	z = -2.5;
+	z = -7.5;
 	$.ajax({
 		type: 'GET',
 		dataType: 'json',
@@ -294,7 +305,7 @@ const classic = () => {
 		url: 'classic.json',
 		success: function(data) {
       console.log(data)
-			for (var i = 0; i < data._embedded.artworks.length; i++) {
+			for (var i = 0; i < data._embedded.artworks.length - 1000; i++) {
         if (data._embedded.artworks[i]._links.image == undefined){
         }
         else{
@@ -349,71 +360,69 @@ const classic = () => {
 }
 
 const modern = () => {
-
+  modernRunning = true;
 	x = 0;
 	y = 1;
 	z = -2.5;
 
-$.ajax({
- type: 'GET',
- dataType: 'json',
- async: false,
- url: 'modern.json',
- success: function(data){
-	console.log(data);
-   for (var i = 0; i < data.length; i++) {
-     var image = new THREE.TextureLoader().load( data[i].image );
-     var map = new THREE.TextureLoader().load(`${image}`);
-     var material = new THREE.SpriteMaterial({
-       map: map,
-       color: 0xffffff,
-       fog: false
-     });
-     var newSprite = new THREE.Sprite(material)
+  $.ajax({
+   type: 'GET',
+   dataType: 'json',
+   async: false,
+   url: 'modern.json',
+   success: function(data){
 
-     if (x >= 0 && y > 0) {
-       x += 0.5;
-       y -= 0.25;
-     } else if (x > 0 && y <= 0) {
-       x -= 0.5;
-       y -= 0.25;
-     } else if (x >= -2 && y < 0) {
-       x -= 0.5;
-       y += 0.25;
-     } else if (x < 0 && y >= 0) {
-       x += 0.5;
-       y += 0.25;
+     for (var i = 0; i < data.length; i++) {
+       var image = data[i].image;
+       var map = new THREE.TextureLoader().load(`${image}`);
+       var material = new THREE.SpriteMaterial({
+         map: map,
+         color: 0xffffff,
+         fog: false
+       });
+       var newSprite = new THREE.Sprite(material)
+
+       if (x >= 0 && y > 0) {
+         x += 0.5;
+         y -= 0.25;
+       } else if (x > 0 && y <= 0) {
+         x -= 0.5;
+         y -= 0.25;
+       } else if (x >= -2 && y < 0) {
+         x -= 0.5;
+         y += 0.25;
+       } else if (x < 0 && y >= 0) {
+         x += 0.5;
+         y += 0.25;
+       }
+       z -= 2.5
+       newSprite.position.set(x, y, z);
+       newSprite.data = data[i];
+       newSprite.index = i + 1;
+       newSprite.modern = true;
+       // newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
+       newSprite.scale.set(1, 1, 1)
+
+
+       var mapFrame = new THREE.TextureLoader().load(`${imageFrame}`);
+       var materialFrame = new THREE.SpriteMaterial({
+         map: mapFrame,
+         color: 0xffffff,
+         fog: false
+       });
+       var frame = new THREE.Sprite(materialFrame);
+
+       frame.position.set(x, y, z);
+       frame.index = i + 1
+       frame.scale.set(1.25, 1.25, 1.25)
+       scene.add(newSprite)
+       scene.add(frame)
      }
-     z -= 2.5
-     newSprite.position.set(x, y, z);
-     newSprite.data = data;
-     newSprite.index = i + 1;
-     newSprite.modern = true;
-     // newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-     newSprite.receiveShadow = true;
-     newSprite.castShadow = true;
-     newSprite.scale.set(1, 1, 1)
 
-     var imageFrame = `image/frame.jpg`
-     var mapFrame = new THREE.TextureLoader().load(`${imageFrame}`);
-     var materialFrame = new THREE.SpriteMaterial({
-       map: mapFrame,
-       color: 0xffffff,
-       fog: false
-     });
-     var frame = new THREE.Sprite(materialFrame);
-
-     frame.position.set(x, y, z);
-     frame.receiveShadow = true;
-     frame.castShadow = true;
-     frame.index = i + 1
-     frame.scale.set(1.25, 1.25, 1.25)
-     scene.add(newSprite)
-     scene.add(frame)
    }
 
- }
-})
+ })
+ lastImagePosition = scene.children[scene.children.length-1].position.z
 
 }
 document.getElementById('classic').onclick = function(){classic();};
