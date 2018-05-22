@@ -321,8 +321,8 @@ const classic = () => {
         newSprite.data = data._embedded.artworks[i];
         newSprite.index = i + 1;
 				// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-				newSprite.receiveShadow = true;
-				newSprite.castShadow = true;
+				// newSprite.receiveShadow = true;
+				// newSprite.castShadow = true;
         newSprite.scale.set(1, 1, 1)
 
         var imageFrame = `image/frame.jpg`
@@ -336,8 +336,8 @@ const classic = () => {
 
         frame.position.set(x, y, z);
 				// frame.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-				frame.receiveShadow = true;
-				frame.castShadow = true;
+				// frame.receiveShadow = true;
+				// frame.castShadow = true;
         frame.index = i + 1
         frame.scale.set(1.25, 1.25, 1.25)
 				scene.add(newSprite)
@@ -391,8 +391,8 @@ $.ajax({
      newSprite.index = i + 1;
      newSprite.modern = true;
      // newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-     newSprite.receiveShadow = true;
-     newSprite.castShadow = true;
+     // newSprite.receiveShadow = true;
+     // newSprite.castShadow = true;
      newSprite.scale.set(1, 1, 1)
 
      var imageFrame = `image/frame.jpg`
@@ -406,8 +406,8 @@ $.ajax({
 
      frame.position.set(x, y, z);
      // frame.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
-     frame.receiveShadow = true;
-     frame.castShadow = true;
+     // frame.receiveShadow = true;
+     // frame.castShadow = true;
      frame.index = i + 1
      frame.scale.set(1.25, 1.25, 1.25)
      scene.add(newSprite)
