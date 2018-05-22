@@ -13,6 +13,11 @@ var lastImagePosition = ""
 var imageFrame = `image/frame.jpg`
 let modernRunning = "";
 
+// Create a scene and camera
+scene = new THREE.Scene();
+camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 25);
+//
+
 const popupAnimation = function() {
   sr.reveal(".drop-in",
   {
@@ -162,15 +167,11 @@ document.addEventListener("keypress", function(event) {
 			//Set up daydream variables
  if ('bluetooth' in navigator === false) {
 	button.style.display = 'none';
-	message.innerHTML = 'This browser doesn\'t support the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API" target="_blank">Web Bluetooth API</a> :(';
 }
 
 
 function init() {
-	// Create a scene and camera
-	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 25);
-	//
+
 
 	// controls.update() must be called after any manual changes to the camera's transform
 	var axis = new THREE.Vector3();
