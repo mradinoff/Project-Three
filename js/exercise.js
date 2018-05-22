@@ -11,7 +11,7 @@ var speed = 0.02;
 var previousIntersect = 1;
 var lastImagePosition = ""
 var imageFrame = `image/frame.jpg`
-let modernRunning = false;
+let modernRunning = "";
 
 const popupAnimation = function() {
   sr.reveal(".drop-in",
@@ -118,8 +118,10 @@ const cursorOver = function(intersects, sceneChildren){
     }
   }
   ;
+  if (whiteSpace === true && modernRunning === ""){
 
-  if (whiteSpace === true ){
+  }
+  else if (whiteSpace === true){
     scene.children[(previousIntersect*2)].material.opacity=1
     scene.children[(previousIntersect*2)+ 1].material.opacity=1
   }

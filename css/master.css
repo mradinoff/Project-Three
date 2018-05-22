@@ -22,10 +22,6 @@ canvas{
   display: none;
   opacity: 0.6;
 }
-
-#popup img{
-  width: 18vw;
-}
 #popup #artist{
   text-transform: capitalize;
 }
