@@ -293,7 +293,7 @@ const classic = () => {
 		async: false,
 		url: 'data.json',
 		success: function(data) {
-			for (var i = 0; i < data._embedded.artworks.length; i++) {`${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
+			for (var i = 0; i < data._embedded.artworks.length; i++) {
         var image = `${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
 				var map = new THREE.TextureLoader().load(`${image}`);
 				var material = new THREE.SpriteMaterial({
@@ -419,7 +419,7 @@ $.ajax({
 })
 
 }
-
+console.log(scene.children)
 document.getElementById('classic').onclick = function(){classic();};
 document.getElementById('modern').onclick = function(){modern();};
 
