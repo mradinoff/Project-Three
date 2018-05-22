@@ -166,7 +166,7 @@ document.addEventListener("keypress", function(event) {
 function init() {
 	// Create a scene and camera
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 40);
+	camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 25);
 	//
 
 	// controls.update() must be called after any manual changes to the camera's transform
@@ -302,12 +302,19 @@ const classic = () => { //CLEARS THE SCENE
 		async: false,
 		url: 'classic.json',
 		success: function(data) {
-      console.log(data)
+
+      var n = data._embedded.artworks.slice(0); // clone the array
+      var r = []; //DATA RANDOMIZER
+      while (n.length){
+          rand = Math.floor(Math.random()*n.length);
+          r.push(n.splice(rand,1));
+      }
+
 			for (var i = 0; i < data._embedded.artworks.length; i++) {
-        if (data._embedded.artworks[i]._links.image == undefined){
+        if (r[i][0]._links.image == undefined){
         }
         else{
-          var image = `${data._embedded.artworks[i]._links.image.href.slice(0, data._embedded.artworks[i]._links.image.href.length-19)}square.jpg`
+          var image = `${r[i][0]._links.image.href.slice(0, r[i][0]._links.image.href.length-19)}square.jpg`
   				var map = new THREE.TextureLoader().load(`${image}`);
   				var material = new THREE.SpriteMaterial({
   					map: map,
@@ -331,7 +338,7 @@ const classic = () => { //CLEARS THE SCENE
   				}
   				z -= 2.5
   				newSprite.position.set(x, y, z);
-          newSprite.data = data._embedded.artworks[i];
+          newSprite.data = r[i][0];
           newSprite.index = i + 1;
   				// newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
           newSprite.scale.set(1, 1, 1)
@@ -369,8 +376,14 @@ const modern = () => {
    url: 'modern.json',
    success: function(data){
 
+     var n = data.slice(0); // clone the array
+     var r = []; //DATA RANDOMIZER
+     while (n.length){
+         rand = Math.floor(Math.random()*n.length);
+         r.push(n.splice(rand,1));
+     }
      for (var i = 0; i < data.length; i++) {
-       var image = data[i].image;
+       var image = r[i][0].image;
        var map = new THREE.TextureLoader().load(`${image}`);
        var material = new THREE.SpriteMaterial({
          map: map,
@@ -394,7 +407,7 @@ const modern = () => {
        }
        z -= 2.5
        newSprite.position.set(x, y, z);
-       newSprite.data = data[i];
+       newSprite.data = r[i][0];
        newSprite.index = i + 1;
        newSprite.modern = true;
        // newSprite.position.set(5+Math.random()*(1, 5),2+Math.random()*(1,5),0+Math.random()*(1,5))
@@ -481,7 +494,7 @@ function onDocumentMouseOver( event ) {
 
 function onDocumentResize( event ){
   renderer.setSize(window.innerWidth, window.innerHeight)
-  camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 40);
+  camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 25);
 }
 
 function animate() {
