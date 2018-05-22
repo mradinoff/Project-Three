@@ -168,7 +168,7 @@ document.addEventListener("keypress", function(event) {
 function init() {
 	// Create a scene and camera
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 100000);
+	camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 40);
 	//
 
 	// controls.update() must be called after any manual changes to the camera's transform
@@ -287,7 +287,7 @@ function init() {
 
 
   // build the skybox Mesh
-  skyboxMesh = new THREE.Mesh( new THREE.BoxGeometry( 100000, 100000, 100000, 1, 1, 1, null, true ), material );
+  skyboxMesh = new THREE.Mesh( new THREE.BoxGeometry( 10000, 10000, 10000, 1, 1, 1, null, true ), material );
   skyboxMesh.doubleSided = true;
   // add it to the scene
   scene.add(skyboxMesh);
@@ -296,7 +296,7 @@ function init() {
 const classic = () => { //CLEARS THE SCENE
 	x = 0;
 	y = 1;
-	z = -2.5;
+	z = -7.5;
 	$.ajax({
 		type: 'GET',
 		dataType: 'json',
@@ -304,7 +304,7 @@ const classic = () => { //CLEARS THE SCENE
 		url: 'classic.json',
 		success: function(data) {
       console.log(data)
-			for (var i = 0; i < data._embedded.artworks.length - 1000; i++) {
+			for (var i = 0; i < data._embedded.artworks.length; i++) {
         if (data._embedded.artworks[i]._links.image == undefined){
         }
         else{
@@ -354,7 +354,6 @@ const classic = () => { //CLEARS THE SCENE
       }
 		}
 	})
-  console.log(scene.children)
   lastImagePosition = scene.children[scene.children.length-1].position.z
 }
 
@@ -362,7 +361,7 @@ const modern = () => {
   modernRunning = true;
 	x = 0;
 	y = 1;
-	z = -2.5;
+	z = -7.5;
 
   $.ajax({
    type: 'GET',
@@ -428,12 +427,14 @@ document.getElementById('classic').onclick = function(){
   for( var i = scene.children.length - 1; i >= 0; i--) {
   scene.remove(scene.children[2]);
  }
-  classic();
+ camera.position.z = 0;
+ classic();
 };
 document.getElementById('modern').onclick = function(){
   for( var i = scene.children.length - 1; i >= 0; i--) {
   scene.remove(scene.children[2]);
  }
+  camera.position.z = 0;
   modern();
 };
 
@@ -481,7 +482,7 @@ function onDocumentMouseOver( event ) {
 
 function onDocumentResize( event ){
   renderer.setSize(window.innerWidth, window.innerHeight)
-  camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 100000);
+  camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 40);
 }
 
 function animate() {
@@ -494,11 +495,11 @@ function animate() {
 		camera.position.z += speed
 	}
 
-	if( camera.position.z > 3){
+	if( camera.position.z > 10){
     backwards = false;
   }
 
-	if (camera.position.z < lastImagePosition - 5){
+	if (camera.position.z < lastImagePosition - 10){
 	 backwards = true
  }
 
