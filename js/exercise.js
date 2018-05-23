@@ -220,31 +220,6 @@ function init() {
 				if (state.isVolPlusDown) { //When up is pressed
 					forwardsPress(0.001);
 				}
-        const motionOver = function(){
-          let pointer = {}
-          pointer.x = quaternion.x;
-          pointer.y = quaternion.y + 0.45;
-          pointer.z = quaternion.z;
-          // find intersections
-          raycaster.setFromCamera( pointer, camera);
-          var intersects = raycaster.intersectObjects( scene.children );
-          cursorOver(intersects);
-        }
-        motionOver();
-
-        if (state.isClickDown === true){
-          event.preventDefault();
-          // document.getElementById('popup').style.display = "none";
-          let pointer = {}
-          pointer.x = quaternion.x;
-          pointer.y = quaternion.y + 0.45;
-          pointer.z = quaternion.z;
-
-          // find intersections
-          raycaster.setFromCamera( pointer, camera);
-          var intersects = raycaster.intersectObjects( scene.children );
-          selecting(intersects);
-        }
 				if (state.isHomeDown) {
 					if (timeout === null) {
 						timeout = setTimeout(function() {
@@ -260,9 +235,7 @@ function init() {
 				}
 				camera.quaternion.copy(quaternionHome);
 				camera.quaternion.multiply(quaternion);
-				// touch.position.x = ( state.xTouch * 2 - 1 ) / 1000;
-				// touch.position.y = - ( state.yTouch * 2 - 1 ) / 1000;
-				// touch.visible = state.xTouch > 0 && state.yTouch > 0;
+
 			}
 		});
 
