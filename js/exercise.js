@@ -153,10 +153,10 @@ window.addEventListener( 'resize', onDocumentResize);
 
 
 document.addEventListener("keypress", function(event) {
-  if (event.keyCode === 119) {
+  if (event.keyCode === 119 || event.keyCode === 87) {
 		forwardsPress(0.01);
 		}
-		if (event.keyCode === 115) {
+		if (event.keyCode === 115 || event.keyCode === 83) {
 				  backwardsPress(0.01)
     }
 		if (event.keyCode === 32) {
